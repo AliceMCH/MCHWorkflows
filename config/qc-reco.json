@@ -1,0 +1,154 @@
+{
+  "qc": {
+    "config": {
+      "database": {
+        "implementation": "CCDB",
+        "host": "ccdb-test.cern.ch:8080",
+        "username": "not_applicable",
+        "password": "not_applicable",
+        "name": "not_applicable"
+      },
+      "Activity": {
+        "number": "42",
+        "type": "2"
+      }
+    },
+    "tasks": {
+      "MCHDigits": {
+        "active": "%QC_TASK_DIGITS_ENABLE%",
+        "className": "o2::quality_control_modules::muonchambers::PhysicsTaskDigits",
+        "moduleName": "QcMuonChambers",
+        "detectorName": "MCH",
+        "cycleDurationSeconds": "300",
+        "maxNumberCycles": "-1",
+        "dataSource": {
+          "type": "direct",
+          "query" : "digits:MCH/DIGITS"
+        },
+        "taskParameters" : {
+          "Diagnostic" : "true"
+        },
+        "saveObjectsToFile": "qc-mch-digits.root",
+        "location": "remote"
+      },
+      "MCHErrors": {
+        "active": "%QC_TASK_ERRORS_ENABLE%",
+        "className": "o2::quality_control_modules::muonchambers::DecodingErrorsTask",
+        "moduleName": "QcMuonChambers",
+        "detectorName": "MCH",
+        "cycleDurationSeconds": "60",
+        "maxNumberCycles": "-1",
+        "dataSource": {
+          "type": "direct",
+          "query": "rawerrors:MCH/ERRORS"
+        },
+        "taskParameters" : {
+          "Diagnostic" : "false"
+        },
+        "location": "remote"
+      },
+      "MCHRofs": {
+        "active": "%QC_TASK_ROFS_ENABLE%",
+        "className": "o2::quality_control_modules::muonchambers::PhysicsTaskRofs",
+        "moduleName": "QcMuonChambers",
+        "detectorName": "MCH",
+        "cycleDurationSeconds": "60",
+        "maxNumberCycles": "-1",
+        "dataSource": {
+          "type": "direct",
+          "query" : "digits:MCH/DIGITS;rofs:MCH/DIGITROFS"
+        },
+        "taskParameters" : {
+          "Diagnostic" : "false"
+        },
+        "saveObjectsToFile": "qc-mch-rofs.root",
+        "location": "remote"
+      },
+      "MCHFRofs": {
+        "active": "%QC_TASK_ROFS_ENABLE%",
+        "className": "o2::quality_control_modules::muonchambers::PhysicsTaskRofs",
+        "moduleName": "QcMuonChambers",
+        "detectorName": "MCH",
+        "cycleDurationSeconds": "60",
+        "maxNumberCycles": "-1",
+        "dataSource": {
+          "type": "direct",
+          "query" : "digits:MCH/F-DIGITS;rofs:MCH/TC-F-DIGITROFS"
+        },
+        "taskParameters" : {
+          "Diagnostic" : "false"
+        },
+        "saveObjectsToFile": "qc-mch-rofs-filtered.root",
+        "location": "remote"
+      },
+      "MCHPreclusters": {
+        "active": "%QC_TASK_PRECLUSTERS_ENABLE%",
+        "className": "o2::quality_control_modules::muonchambers::PhysicsTaskPreclusters",
+        "moduleName": "QcMuonChambers",
+        "detectorName": "MCH",
+        "cycleDurationSeconds": "300",
+        "maxNumberCycles": "-1",
+        "dataSource": {
+          "type": "direct",
+          "query": "preclusters:MCH/PRECLUSTERS/0;preclusterdigits:MCH/PRECLUSTERDIGITS/0"
+        },
+        "taskParameters" : {
+          "Diagnostic" : "true"
+        },
+        "saveObjectsToFile": "qc-mch-preclusters.root",
+        "location": "remote"
+      }
+    },
+    "checks": {
+      "QcCheckMCHDigits": {
+        "active": "%QC_TASK_DIGITS_ENABLE%",
+        "className": "o2::quality_control_modules::muonchambers::PhysicsCheck",
+        "moduleName": "QcMuonChambers",
+        "detectorName": "MCH",
+        "policy": "OnAny",
+        "checkParameters": {
+          "MinOccupancy": "0.01",
+          "MaxOccupancy": "10",
+          "MinGoodFraction": "0.9",
+          "OccupancyPlotScaleMin": "0",
+          "OccupancyPlotScaleMax": "1",
+          "Verbose": "false"
+        },
+        "dataSource": [{
+          "type": "Task",
+          "name": "MCHDigits",
+          "MOs" : ["Occupancy_Elec", "MeanOccupancy", "DigitOrbitInTFDE", "Occupancy_ST12", "Occupancy_ST345"]
+        }]
+      },
+      "QcCheckMCHErrors": {
+        "active": "%QC_TASK_ERRORS_ENABLE%",
+        "className": "o2::quality_control_modules::muonchambers::DecodingErrorsCheck",
+        "moduleName": "QcMuonChambers",
+        "detectorName": "MCH",
+        "policy": "OnAny",
+        "checkParameters": {
+          "MaxErrorRate": "100"
+        },
+        "dataSource": [{
+          "type": "Task",
+          "name": "MCHErrors",
+          "MOs" : ["DecodingErrorsPerFeeId", "DecodingErrorsPerChamber"]
+        }]
+      },
+      "QcCheckMCHPreclusters": {
+        "active": "%QC_TASK_PRECLUSTERS_ENABLE%",
+        "className": "o2::quality_control_modules::muonchambers::PhysicsPreclustersCheck",
+        "moduleName": "QcMuonChambers",
+        "detectorName": "MCH",
+        "policy": "OnAny",
+        "dataSource": [{
+          "type": "Task",
+          "name": "MCHPreclusters",
+          "MOs" : "all"
+        }]
+      }
+   }
+  },
+  "dataSamplingPolicies": [
+  ]
+}
