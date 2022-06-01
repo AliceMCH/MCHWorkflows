@@ -6,10 +6,13 @@ echo "SCRIPTDIR: ${SCRIPTDIR}"
 
 export XRD_REQUESTTIMEOUT=1200
 
-#DTYPE=readout
-#DTYPE=ctf
-DTYPE=ctflist
-#DTYPE=tflist
+
+
+# Type of input data. Possible values are:
+# readout: data file with raw CRU pages stored directly from readout
+# ctflist: text file with a list of local or remote CTF files (default)
+# tflist:  text file with a list of local or remote TF files
+INPUT_TYPE=${INPUT_TYPE:-ctflist}
 
 
 
@@ -50,7 +53,7 @@ QC_TASK_PRECLUSTERS_ENABLE=${QC_TASK_PRECLUSTERS_ENABLE:-1}
 
 
 # disable errors QC task when processing CTFs
-if [ x"$DTYPE" = "xctf" -o x"$DTYPE" = "xctflist" ]; then
+if [ x"$INPUT_TYPE" = "xctflist" ]; then
     QC_TASK_ERRORS_ENABLE=0
 fi
 
@@ -90,25 +93,22 @@ ARGS_ALL="--session default --shm-segment-size 16000000000"
 DECODER_PROF=""
 #DECODER_PROF="--child-driver 'valgrind --tool=callgrind'"
 
-if [ $DTYPE = readout ]; then
+if [ $INPUT_TYPE = readout ]; then
     WORKFLOW="o2-mch-cru-page-reader-workflow ${ARGS_ALL} --infile \"$1\" --full-tf | "
     WORKFLOW+="o2-mch-raw-to-digits-workflow ${ARGS_ALL} --dataspec readout:RDT/RAWDATA --ignore-dist-stf --severity warning --configKeyValues \"MCHCoDecParam.minDigitOrbitAccepted=-10;MCHCoDecParam.maxDigitOrbitAccepted=-1;HBFUtils.nHBFPerTF=128\" --time-reco-mode bcreset ${MAP_OPT} ${DECODER_PROF} | "
 fi
 
-if [ $DTYPE = ctf ]; then
-    WORKFLOW="o2-ctf-reader-workflow ${ARGS_ALL} --delay 1  --ctf-input \"$1\"  --ctf-dict ctf_dictionary.root --onlyDet MCH --max-tf -1 | "
-    WORKFLOW+="o2-tfidinfo-writer-workflow ${ARGS_ALL} | "
-fi
-
-if [ $DTYPE = ctflist ]; then
+if [ $INPUT_TYPE = ctflist ]; then
     WORKFLOW="o2-ctf-reader-workflow ${ARGS_ALL} --ctf-input ctflist.txt --remote-regex \"^alien://.+\" --copy-cmd no-copy --onlyDet MCH | "
     WORKFLOW+="o2-tfidinfo-writer-workflow ${ARGS_ALL} | "
 fi
 
-if [ $DTYPE = tflist ]; then
+if [ $INPUT_TYPE = tflist ]; then
     WORKFLOW="o2-raw-tf-reader-workflow ${ARGS_ALL} --onlyDet MCH --input-data tflist.txt --remote-regex \"^alien://.+\" --delay 1 --loop 0 | "
     WORKFLOW+="o2-mch-raw-to-digits-workflow ${ARGS_ALL} --configKeyValues \"MCHCoDecParam.minDigitOrbitAccepted=-10;MCHCoDecParam.maxDigitOrbitAccepted=-1;HBFUtils.nHBFPerTF=128\" --time-reco-mode bcreset | "
 fi
+
+
 
 if [ x"${RUN_FULL_RECO}" = "x1" ]; then
 
