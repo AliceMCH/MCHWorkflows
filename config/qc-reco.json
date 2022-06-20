@@ -3,7 +3,7 @@
     "config": {
       "database": {
         "implementation": "CCDB",
-        "host": "ccdb-test.cern.ch:8080",
+        "host": "ccdb-test.cern.ch:8080",     "": "ccdb-test.cern.ch:8080",
         "username": "not_applicable",
         "password": "not_applicable",
         "name": "not_applicable"
@@ -19,7 +19,7 @@
         "className": "o2::quality_control_modules::muonchambers::PhysicsTaskDigits",
         "moduleName": "QcMuonChambers",
         "detectorName": "MCH",
-        "cycleDurationSeconds": "300",
+        "cycleDurationSeconds": "%QC_CYCLE_DURATION%",
         "maxNumberCycles": "-1",
         "dataSource": {
           "type": "direct",
@@ -36,7 +36,7 @@
         "className": "o2::quality_control_modules::muonchambers::DecodingErrorsTask",
         "moduleName": "QcMuonChambers",
         "detectorName": "MCH",
-        "cycleDurationSeconds": "60",
+        "cycleDurationSeconds": "%QC_CYCLE_DURATION%",
         "maxNumberCycles": "-1",
         "dataSource": {
           "type": "direct",
@@ -52,7 +52,7 @@
         "className": "o2::quality_control_modules::muonchambers::PhysicsTaskRofs",
         "moduleName": "QcMuonChambers",
         "detectorName": "MCH",
-        "cycleDurationSeconds": "60",
+        "cycleDurationSeconds": "%QC_CYCLE_DURATION%",
         "maxNumberCycles": "-1",
         "dataSource": {
           "type": "direct",
@@ -69,7 +69,7 @@
         "className": "o2::quality_control_modules::muonchambers::PhysicsTaskRofs",
         "moduleName": "QcMuonChambers",
         "detectorName": "MCH",
-        "cycleDurationSeconds": "60",
+        "cycleDurationSeconds": "%QC_CYCLE_DURATION%",
         "maxNumberCycles": "-1",
         "dataSource": {
           "type": "direct",
@@ -86,7 +86,7 @@
         "className": "o2::quality_control_modules::muonchambers::PhysicsTaskPreclusters",
         "moduleName": "QcMuonChambers",
         "detectorName": "MCH",
-        "cycleDurationSeconds": "300",
+        "cycleDurationSeconds": "%QC_CYCLE_DURATION%",
         "maxNumberCycles": "-1",
         "dataSource": {
           "type": "direct",
@@ -96,6 +96,23 @@
           "Diagnostic" : "true"
         },
         "saveObjectsToFile": "qc-mch-preclusters.root",
+        "location": "remote"
+      },
+      "MCHTracks": {
+        "active": "%QC_TASK_TRACKS_ENABLE%",
+        "className": "o2::quality_control_modules::muonchambers::TracksTask",
+        "moduleName": "QcMuonChambers",
+        "detectorName": "MCH",
+        "cycleDurationSeconds": "%QC_CYCLE_DURATION%",
+        "maxNumberCycles": "-1",
+        "dataSource": {
+          "type": "direct",
+          "query" : "tracks:MCH/TRACKS;trackrofs:MCH/TRACKROFS;trackclusters:MCH/TRACKCLUSTERS;trackdigits:MCH/CLUSTERDIGITS"
+        },
+        "taskParameters" : {
+                "maxTracksPerTF": "10"
+        },
+        "saveObjectsToFile": "qc-mch-tracks.root",
         "location": "remote"
       }
     },
@@ -117,7 +134,7 @@
         "dataSource": [{
           "type": "Task",
           "name": "MCHDigits",
-          "MOs" : ["Occupancy_Elec", "MeanOccupancy", "DigitOrbitInTFDE", "Occupancy_ST12", "Occupancy_ST345"]
+          "MOs" : "all"
         }]
       },
       "QcCheckMCHErrors": {
@@ -147,7 +164,107 @@
           "MOs" : "all"
         }]
       }
-   }
+    },
+    "postprocessing": {
+      "MCHTrendingRate": {
+        "active": "true",
+        "className": "o2::quality_control_modules::muonchambers::TrendingRate",
+        "moduleName": "QcMuonChambers",
+        "detectorName": "MCH",
+        "dataSources": [
+          {
+            "type": "repository",
+            "path": "MCH/MO/MCHDigits",
+            "names": [
+              "Occupancy_Elec"
+            ],
+            "reductorName": "o2::quality_control_modules::common::TH1Reductor",
+            "moduleName": "QcCommon"
+          }
+        ],
+        "plots": [
+          {
+            "name": "CH1_rate",
+            "title": "Rate CH1",
+            "varexp": "rateCH1:time",
+            "selection": "",
+            "option": "*L"
+          },
+          {
+            "name": "CH2_rate",
+            "title": "Rate CH2",
+            "varexp": "rateCH2:time",
+            "selection": "",
+            "option": "*L"
+          },
+          {
+            "name": "CH3_rate",
+            "title": "Rate CH3",
+            "varexp": "rateCH3:time",
+            "selection": "",
+            "option": "*L"
+          },
+          {
+            "name": "CH4_rate",
+            "title": "Rate CH4",
+            "varexp": "rateCH4:time",
+            "selection": "",
+            "option": "*L"
+          },
+          {
+            "name": "CH5_rate",
+            "title": "Rate CH5",
+            "varexp": "rateCH5:time",
+            "selection": "",
+            "option": "*L"
+          },
+          {
+            "name": "CH6_rate",
+            "title": "Rate CH6",
+            "varexp": "rateCH6:time",
+            "selection": "",
+            "option": "*L"
+          },
+          {
+            "name": "CH7_rate",
+            "title": "Rate CH7",
+            "varexp": "rateCH7:time",
+            "selection": "",
+            "option": "*L"
+          },
+          {
+            "name": "CH8_rate",
+            "title": "Rate CH8",
+            "varexp": "rateCH8:time",
+            "selection": "",
+            "option": "*L"
+          },
+          {
+            "name": "CH9_rate",
+            "title": "Rate CH9",
+            "varexp": "rateCH9:time",
+            "selection": "",
+            "option": "*L"
+          },
+          {
+            "name": "CH10_rate",
+            "title": "Rate CH10",
+            "varexp": "rateCH10:time",
+            "selection": "",
+            "option": "*L"
+          }
+        ],
+        "initTrigger": [
+          "userorcontrol"
+        ],
+        "updateTrigger": [
+          "10min"
+        ],
+        "stopTrigger": [
+          "userorcontrol"
+        ]
+      }
+    }
   },
   "dataSamplingPolicies": [
   ]
