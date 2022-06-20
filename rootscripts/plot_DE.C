@@ -13,6 +13,8 @@ void plot_DE(int de)
   TFile* fpreclus = new TFile("qc-mch-preclusters.root");
 
   gStyle->SetOptStat(0);
+  gStyle->SetPalette(57, 0);
+  gStyle->SetNumberContours(40);
   int cW = 600;
   int cH = 1200;
   if (de >= 500) {
@@ -33,12 +35,39 @@ void plot_DE(int de)
   // Occupancy
 
   c.cd(1);
-  gPad->SetLogz(kTRUE);
-  TString histname = TString::Format("Expert/ST%d/DE%d/Occupancy_B_XY_%03d", station, de, de);
+  gPad->SetLogz(kFALSE);
+  TString histname = TString::Format("Expert/ST%d/DE%d/DualSampa_B_XY_%03d", station, de, de);
   h2 = GetTH2(fdigits, histname);
   if( h2 ) {
-    h2->SetMinimum(0.000000001);
-    //h2->SetMaximum(0.1);
+    h2->SetMinimum(0);
+    h2->SetMaximum(40);
+    h2->Draw("colz");
+  }
+
+  c.cd(2);
+  gPad->SetLogz(kFALSE);
+  histname = TString::Format("Expert/ST%d/DE%d/DualSampa_NB_XY_%03d", station, de, de);
+  h2 = GetTH2(fdigits, histname);
+  if( h2 ) {
+    h2->SetMinimum(0);
+    h2->SetMaximum(40);
+    h2->Draw("colz");
+  }
+
+  c.SaveAs(TString::Format("DE%d.pdf(", de));
+  c.SetLogy(kFALSE);
+
+
+  // ==============================
+  // Occupancy
+
+  c.cd(1);
+  //gPad->SetLogz(kTRUE);
+  histname = TString::Format("Expert/ST%d/DE%d/Occupancy_B_XY_%03d", station, de, de);
+  h2 = GetTH2(fdigits, histname);
+  if( h2 ) {
+    h2->SetMinimum(0.000001);
+    h2->SetMaximum(0.00001);
     h2->Draw("colz");
   }
 
@@ -47,12 +76,12 @@ void plot_DE(int de)
   histname = TString::Format("Expert/ST%d/DE%d/Occupancy_NB_XY_%03d", station, de, de);
   h2 = GetTH2(fdigits, histname);
   if( h2 ) {
-    h2->SetMinimum(0.000000001);
+    h2->SetMinimum(0.000001);
     //h2->SetMaximum(0.1);
     h2->Draw("colz");
   }
 
-  c.SaveAs(TString::Format("DE%d.pdf(", de));
+  c.SaveAs(TString::Format("DE%d.pdf", de));
   c.SetLogy(kFALSE);
 
 

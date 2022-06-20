@@ -7,7 +7,7 @@ TH2F* GetTH2(TFile* f, TString histname)
   return (TH2F*)key->ReadObjectAny(TH2F::Class());
 }
 
-void plot_stations(int stations)
+void plot_stations()
 {
   TFile* fdigits = new TFile("qc-mch-digits.root");
   TFile* fpreclus = new TFile("qc-mch-preclusters.root");
@@ -20,35 +20,39 @@ void plot_stations(int stations)
   TH2F* h2;
   TH2F* h2_2;
 
+  int stations[2] = {12, 345};
 
-  // ==============================
-  // Occupancy
+  for (int s = 0; s < 2; s++) {
 
-  c.SetLogz(kTRUE);
-  TString histname = TString::Format("Occupancy_ST%d", stations);
-  h2 = GetTH2(fdigits, histname);
-  if( h2 ) {
-    h2->SetMinimum(0.000001);
-    //h2->SetMaximum(0.1);
-    h2->Draw("colz");
+    // ==============================
+    // Occupancy
+
+    c.SetLogz(kTRUE);
+    TString histname = TString::Format("Occupancy_ST%d", stations[s]);
+    h2 = GetTH2(fdigits, histname);
+    if( h2 ) {
+      h2->SetMinimum(0.000000001);
+      //h2->SetMaximum(0.1);
+      h2->Draw("colz");
+    }
+
+    c.SaveAs(TString::Format("ST%d.pdf(", stations[s]));
+    c.SetLogy(kFALSE);
+
+
+    // ==============================
+    // Efficiency
+
+    c.SetLogz(kFALSE);
+    histname = TString::Format("Pseudoeff_ST%d", stations[s]);
+    h2 = GetTH2(fpreclus, histname);
+    if( h2 ) {
+      h2->SetMinimum(0);
+      h2->SetMaximum(1);
+      h2->Draw("colz");
+    }
+
+    c.SaveAs(TString::Format("ST%d.pdf)", stations[s]));
+    c.SetLogy(kFALSE);
   }
-
-  c.SaveAs(TString::Format("ST%d.pdf(", stations));
-  c.SetLogy(kFALSE);
-
-
-  // ==============================
-  // Efficiency
-
-  c.SetLogz(kFALSE);
-  histname = TString::Format("Pseudoeff_ST%d", stations);
-  h2 = GetTH2(fpreclus, histname);
-  if( h2 ) {
-    h2->SetMinimum(0);
-    h2->SetMaximum(1);
-    h2->Draw("colz");
-  }
-
-  c.SaveAs(TString::Format("ST%d.pdf)", stations));
-  c.SetLogy(kFALSE);
 }
