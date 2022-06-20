@@ -2,7 +2,7 @@
 
 export INFOLOGGER_MODE=stdout
 export SCRIPTDIR=$(readlink -f $(dirname $0))
-echo "SCRIPTDIR: ${SCRIPTDIR}"
+#echo "SCRIPTDIR: ${SCRIPTDIR}"
 
 DIR=$1
 
