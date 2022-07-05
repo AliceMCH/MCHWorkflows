@@ -60,9 +60,9 @@ CONFIG_TYPE=${CONFIG_TYPE:-pp}
 
 if [ x"${CONFIG_TYPE}" = "xpp" ]; then
 
-    DIGIT_FILTER_CONFIG="MCHDigitFilter.rejectBackground=true;MCHDigitFilter.timeOffset=126;MCHDigitFilter.minADC=20"
-    TIME_CLUSTERING_CONFIG="MCHTimeClusterizer.onlyTrackable=false;MCHTimeClusterizer.peakSearchSignalOnly=true"
-    CLUSTERING_CONFIG="MCHClustering.lowestPadCharge=20;MCHClustering.defaultClusterResolution=0.4"
+    DIGIT_FILTER_CONFIG="MCHDigitFilter.rejectBackground=true;MCHDigitFilter.timeOffset=126;MCHDigitFilter.minADC=1"
+    TIME_CLUSTERING_CONFIG="MCHTimeClusterizer.onlyTrackable=true;MCHTimeClusterizer.peakSearchSignalOnly=true"
+    CLUSTERING_CONFIG="MCHClustering.lowestPadCharge=10;MCHClustering.defaultClusterResolution=0.4"
     TRACKING_CONFIG="MCHTracking.chamberResolutionX=0.4;MCHTracking.chamberResolutionY=0.4;MCHTracking.sigmaCutForTracking=7.;MCHTracking.sigmaCutForImprovement=6."
 
 fi
@@ -145,13 +145,16 @@ ARGS_ALL="--session default --shm-segment-size 16000000000"
 DECODER_PROF=""
 #DECODER_PROF="--child-driver 'valgrind --tool=callgrind'"
 
+QC_PROF=""
+#QC_PROF="--child-driver 'valgrind --tool=callgrind'"
+
 if [ $INPUT_TYPE = readout ]; then
     WORKFLOW="o2-mch-cru-page-reader-workflow ${ARGS_ALL} --infile \"$1\" --full-tf | "
     WORKFLOW+="o2-mch-raw-to-digits-workflow ${ARGS_ALL} --dataspec readout:RDT/RAWDATA --ignore-dist-stf --severity warning --configKeyValues \"MCHCoDecParam.minDigitOrbitAccepted=-10;MCHCoDecParam.maxDigitOrbitAccepted=-1;HBFUtils.nHBFPerTF=128\" --time-reco-mode bcreset ${MAP_OPT} ${DECODER_PROF} | "
 fi
 
 if [ $INPUT_TYPE = ctflist ]; then
-    WORKFLOW="o2-ctf-reader-workflow ${ARGS_ALL} --ctf-input \"$1\" --remote-regex \"^alien://.+\" --copy-cmd no-copy --onlyDet ${DETECTORS_LIST} --max-tf -1 | "
+    WORKFLOW="o2-ctf-reader-workflow ${ARGS_ALL} --ctf-input \"$1\" --remote-regex \"^alien://.+\" --copy-cmd no-copy --onlyDet ${DETECTORS_LIST} --max-tf -1 --delay 0 | "
     WORKFLOW+="o2-tfidinfo-writer-workflow ${ARGS_ALL} | "
 fi
 
@@ -191,7 +194,9 @@ else
 	    WORKFLOW+="o2-mch-clusters-transformer-workflow ${ARGS_ALL} | "
 	    
 	    if [ x"$RUN_TRACKING" = "x1" ]; then
-		WORKFLOW+="o2-mch-clusters-to-tracks-workflow ${ARGS_ALL} --l3Current ${L3_CURRENT} --dipoleCurrent ${DIPOLE_CURRENT} | "
+		WORKFLOW+="o2-mch-clusters-to-tracks-workflow ${ARGS_ALL} --digits --l3Current ${L3_CURRENT} --dipoleCurrent ${DIPOLE_CURRENT} | "
+		WORKFLOW+="o2-mch-tracks-writer-workflow ${ARGS_ALL} --digits | "
+		#WORKFLOW+="o2-mch-tracks-out-workflow ${ARGS_ALL} | "
 		
 		if [ x"${RUN_MATCHING_MID}" = "x1" ]; then
 		    WORKFLOW+="o2-mid-reco-workflow ${ARGS_ALL} --disable-mc --mid-tracker-keep-best | "
@@ -209,7 +214,7 @@ fi
 
 
 if [ x"${RUN_QC}" = "x1" ]; then
-    WORKFLOW+="o2-qc ${ARGS_ALL} ${ARGS_QC} --config json:/${SCRIPTDIR}/qc.json | "
+    WORKFLOW+="o2-qc ${ARGS_ALL} ${ARGS_QC} --config json:/${SCRIPTDIR}/qc.json ${QC_PROF} | "
 fi
 
 WORKFLOW+="o2-dpl-run ${ARGS_ALL} --batch --run"
