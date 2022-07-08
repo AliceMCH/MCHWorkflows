@@ -92,6 +92,7 @@ QC_TASK_ERRORS_ENABLE=${QC_TASK_ERRORS_ENABLE:-1}
 QC_TASK_ROFS_ENABLE=${QC_TASK_ROFS_ENABLE:-1}
 QC_TASK_PRECLUSTERS_ENABLE=${QC_TASK_PRECLUSTERS_ENABLE:-1}
 QC_TASK_TRACKS_ENABLE=${QC_TASK_TRACKS_ENABLE:-1}
+QC_TASK_TRACKS_MCHMID_ENABLE=${QC_TASK_TRACKS_MCHMID_ENABLE:-1}
 QC_CYCLE_DURATION=${QC_CYCLE_DURATION:-300}
 
 
@@ -108,8 +109,18 @@ if [ x"$RUN_PRECLUSTERING" != "x1" ]; then
 fi
 
 # disable tracks QC task if tracking is disabled in the reconstruction
+if [ x"$RUN_CLUSTERING" != "x1" ]; then
+    RUN_TRACKING=0
+fi
+
+# disable tracks QC task if tracking is disabled in the reconstruction
 if [ x"$RUN_TRACKING" != "x1" ]; then
     QC_TASK_TRACKS_ENABLE=0
+fi
+
+# disable MCH/MID matched tracks QC task if matching is disabled in the reconstruction
+if [ x"$RUN_MATCHING_MID" != "x1" ]; then
+    QC_TASK_TRACKS_MCHMID_ENABLE=0
 fi
 
 
@@ -122,7 +133,6 @@ else
     ARGS_QC=""
 fi
 
-
 # create the QC configuration from template
 cat "$QCCONF" | \
     sed "s/%QC_TASK_DIGITS_ENABLE%/${QC_TASK_DIGITS_ENABLE}/g" | \
@@ -130,6 +140,7 @@ cat "$QCCONF" | \
     sed "s/%QC_TASK_ROFS_ENABLE%/${QC_TASK_ROFS_ENABLE}/g" | \
     sed "s/%QC_TASK_PRECLUSTERS_ENABLE%/${QC_TASK_PRECLUSTERS_ENABLE}/g" | \
     sed "s/%QC_TASK_TRACKS_ENABLE%/${QC_TASK_TRACKS_ENABLE}/g" | \
+    sed "s/%QC_TASK_TRACKS_MCHMID_ENABLE%/${QC_TASK_TRACKS_MCHMID_ENABLE}/g" | \
     sed "s/%QC_CYCLE_DURATION%/${QC_CYCLE_DURATION}/g" > qc.json
 
 # start merger process if requested
@@ -148,11 +159,6 @@ DECODER_PROF=""
 QC_PROF=""
 #QC_PROF="--child-driver 'valgrind --tool=callgrind'"
 
-if [ $INPUT_TYPE = readout ]; then
-    WORKFLOW="o2-mch-cru-page-reader-workflow ${ARGS_ALL} --infile \"$1\" --full-tf | "
-    WORKFLOW+="o2-mch-raw-to-digits-workflow ${ARGS_ALL} --dataspec readout:RDT/RAWDATA --ignore-dist-stf --severity warning --configKeyValues \"MCHCoDecParam.minDigitOrbitAccepted=-10;MCHCoDecParam.maxDigitOrbitAccepted=-1;HBFUtils.nHBFPerTF=128\" --time-reco-mode bcreset ${MAP_OPT} ${DECODER_PROF} | "
-fi
-
 if [ $INPUT_TYPE = ctflist ]; then
     WORKFLOW="o2-ctf-reader-workflow ${ARGS_ALL} --ctf-input \"$1\" --remote-regex \"^alien://.+\" --copy-cmd no-copy --onlyDet ${DETECTORS_LIST} --max-tf -1 --delay 0 | "
     WORKFLOW+="o2-tfidinfo-writer-workflow ${ARGS_ALL} | "
@@ -161,6 +167,11 @@ fi
 if [ $INPUT_TYPE = tflist ]; then
     WORKFLOW="o2-raw-tf-reader-workflow ${ARGS_ALL} --onlyDet ${DETECTORS_LIST} --input-data tflist.txt --remote-regex \"^alien://.+\" --delay 1 --loop 0 | "
     WORKFLOW+="o2-mch-raw-to-digits-workflow ${ARGS_ALL} --configKeyValues \"MCHCoDecParam.minDigitOrbitAccepted=-10;MCHCoDecParam.maxDigitOrbitAccepted=-1;HBFUtils.nHBFPerTF=128\" --time-reco-mode bcreset | "
+fi
+
+if [ $INPUT_TYPE = readout ]; then
+    WORKFLOW="o2-mch-cru-page-reader-workflow ${ARGS_ALL} --infile \"$1\" --full-tf | "
+    WORKFLOW+="o2-mch-raw-to-digits-workflow ${ARGS_ALL} --dataspec readout:RDT/RAWDATA --ignore-dist-stf --severity warning --configKeyValues \"MCHCoDecParam.minDigitOrbitAccepted=-10;MCHCoDecParam.maxDigitOrbitAccepted=-1;HBFUtils.nHBFPerTF=128\" --time-reco-mode bcreset ${MAP_OPT} ${DECODER_PROF} | "
 fi
 
 
@@ -201,7 +212,10 @@ else
 		if [ x"${RUN_MATCHING_MID}" = "x1" ]; then
 		    WORKFLOW+="o2-mid-reco-workflow ${ARGS_ALL} --disable-mc --mid-tracker-keep-best | "
 		fi
-		WORKFLOW+="o2-muon-tracks-matcher-workflow ${ARGS_ALL} --disable-mc | "
+
+		if [ x"${RUN_MATCHING_MID}" = "x1" ]; then
+		    WORKFLOW+="o2-muon-tracks-matcher-workflow ${ARGS_ALL} --disable-mc --disable-root-input | "
+		fi
 
 		if [ x"${RUN_EVENT_DISPLAY}" = "x1" ]; then
 		    WORKFLOW+="o2-eve-export-workflow ${ARGS_ALL} --display-tracks MCH,MID --display-clusters MCH,MID --jsons-folder EventDisplay --disable-mc --disable-root-input | "

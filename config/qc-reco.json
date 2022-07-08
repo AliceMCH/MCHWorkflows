@@ -27,7 +27,8 @@
           "query" : "digits:MCH/DIGITS"
         },
         "taskParameters" : {
-          "Diagnostic" : "true"
+          "Diagnostic" : "false",
+          "OnCycle" : "true"
         },
         "saveObjectsToFile": "qc-mch-digits.root",
         "location": "remote"
@@ -114,6 +115,25 @@
                 "maxTracksPerTF": "10"
         },
         "saveObjectsToFile": "qc-mch-tracks.root",
+        "location": "remote"
+      },
+      "MUONTracks": {
+        "active": "%QC_TASK_TRACKS_MCHMID_ENABLE%",
+        "className": "o2::quality_control_modules::muon::TracksTask",
+        "moduleName": "QcMUONCommon",
+        "detectorName": "GLO",
+        "cycleDurationSeconds": "%QC_CYCLE_DURATION%",
+        "maxNumberCycles": "-1",
+        "dataSource": {
+          "type": "direct",
+          "query": "mchtracks:MCH/TRACKS;mchtrackrofs:MCH/TRACKROFS;mchtrackclusters:MCH/TRACKCLUSTERS;mchtrackdigits:MCH/CLUSTERDIGITS;muontracks:GLO/MTC_MCHMID"
+        },
+        "taskParameters": {
+          "maxTracksPerTF": "100",
+          "standaloneMCHTracks": true,
+          "matchedMCHMIDTracks": true
+        },
+        "saveObjectsToFile": "qc-mchmid-tracks.root",
         "location": "remote"
       }
     },
