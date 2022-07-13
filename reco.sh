@@ -60,9 +60,9 @@ CONFIG_TYPE=${CONFIG_TYPE:-pp}
 
 if [ x"${CONFIG_TYPE}" = "xpp" ]; then
 
-    DIGIT_FILTER_CONFIG="MCHDigitFilter.rejectBackground=true;MCHDigitFilter.timeOffset=126;MCHDigitFilter.minADC=1"
+    DIGIT_FILTER_CONFIG="MCHDigitFilter.rejectBackground=true;MCHDigitFilter.timeOffset=142;MCHDigitFilter.minADC=1"
     TIME_CLUSTERING_CONFIG="MCHTimeClusterizer.onlyTrackable=true;MCHTimeClusterizer.peakSearchSignalOnly=true"
-    CLUSTERING_CONFIG="MCHClustering.lowestPadCharge=10;MCHClustering.defaultClusterResolution=0.4"
+    CLUSTERING_CONFIG="MCHClustering.lowestPadCharge=1;MCHClustering.defaultClusterResolution=0.4"
     TRACKING_CONFIG="MCHTracking.chamberResolutionX=0.4;MCHTracking.chamberResolutionY=0.4;MCHTracking.sigmaCutForTracking=7.;MCHTracking.sigmaCutForImprovement=6."
 
 fi
@@ -201,20 +201,21 @@ else
 	WORKFLOW+="o2-mch-digits-to-preclusters-workflow ${ARGS_ALL} --input-digits-data-description \"F-DIGITS\" --check-no-leftover-digits off | "
 	
 	if [ x"$RUN_CLUSTERING" = "x1" ]; then
-	    WORKFLOW+="o2-mch-preclusters-to-clusters-original-workflow ${ARGS_ALL} | "
+	    WORKFLOW+="o2-mch-preclusters-to-clusters-original-workflow ${ARGS_ALL} --configKeyValues \"${CLUSTERING_CONFIG}\" | "
 	    WORKFLOW+="o2-mch-clusters-transformer-workflow ${ARGS_ALL} | "
 	    
 	    if [ x"$RUN_TRACKING" = "x1" ]; then
-		WORKFLOW+="o2-mch-clusters-to-tracks-workflow ${ARGS_ALL} --digits --l3Current ${L3_CURRENT} --dipoleCurrent ${DIPOLE_CURRENT} | "
-		WORKFLOW+="o2-mch-tracks-writer-workflow ${ARGS_ALL} --digits | "
+		WORKFLOW+="o2-mch-clusters-to-tracks-workflow ${ARGS_ALL} --l3Current ${L3_CURRENT} --dipoleCurrent ${DIPOLE_CURRENT} --configKeyValues \"${TRACKING_CONFIG}\" | "
+		WORKFLOW+="o2-mch-tracks-writer-workflow ${ARGS_ALL} | "
 		#WORKFLOW+="o2-mch-tracks-out-workflow ${ARGS_ALL} | "
 		
 		if [ x"${RUN_MATCHING_MID}" = "x1" ]; then
-		    WORKFLOW+="o2-mid-reco-workflow ${ARGS_ALL} --disable-mc --mid-tracker-keep-best | "
+		    WORKFLOW+="o2-mid-reco-workflow ${ARGS_ALL} --disable-mc --change-local-to-BC -2 | "
 		fi
 
 		if [ x"${RUN_MATCHING_MID}" = "x1" ]; then
 		    WORKFLOW+="o2-muon-tracks-matcher-workflow ${ARGS_ALL} --disable-mc --disable-root-input | "
+		    #WORKFLOW+="o2-muon-tracks-writer-workflow ${ARGS_ALL} | "
 		fi
 
 		if [ x"${RUN_EVENT_DISPLAY}" = "x1" ]; then
