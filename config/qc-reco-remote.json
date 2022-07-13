@@ -31,14 +31,13 @@
         },
         "saveObjectsToFile": "qc-mch-digits.root",
         "location": "local",
-        "mergingMode": "delta",
         "localControl": "odc",
         "localMachines": [
           "localhost"
         ],
         "remotePort": "47790",
         "remoteMachine": "localhost",
-        "mergingMode": "delta"
+        "mergingMode": "entire"
       },
       "MCHErrors": {
         "active": "%QC_TASK_ERRORS_ENABLE%",
@@ -55,14 +54,13 @@
           "Diagnostic" : "false"
         },
         "location": "local",
-        "mergingMode": "delta",
         "localControl": "odc",
         "localMachines": [
           "localhost"
         ],
         "remotePort": "47791",
         "remoteMachine": "localhost",
-        "mergingMode": "delta"
+        "mergingMode": "entire"
       },
       "MCHRofs": {
         "active": "%QC_TASK_ROFS_ENABLE%",
@@ -80,14 +78,13 @@
         },
         "saveObjectsToFile": "qc-mch-rofs.root",
         "location": "local",
-        "mergingMode": "delta",
         "localControl": "odc",
         "localMachines": [
           "localhost"
         ],
         "remotePort": "47792",
         "remoteMachine": "localhost",
-        "mergingMode": "delta"
+        "mergingMode": "entire"
       },
       "MCHFRofs": {
         "active": "%QC_TASK_ROFS_ENABLE%",
@@ -105,14 +102,13 @@
         },
         "saveObjectsToFile": "qc-mch-rofs-filtered.root",
         "location": "local",
-        "mergingMode": "delta",
         "localControl": "odc",
         "localMachines": [
           "localhost"
         ],
         "remotePort": "47793",
         "remoteMachine": "localhost",
-        "mergingMode": "delta"
+        "mergingMode": "entire"
       },
       "MCHPreclusters": {
         "active": "%QC_TASK_PRECLUSTERS_ENABLE%",
@@ -130,14 +126,13 @@
         },
         "saveObjectsToFile": "qc-mch-preclusters.root",
         "location": "local",
-        "mergingMode": "delta",
         "localControl": "odc",
         "localMachines": [
           "localhost"
         ],
         "remotePort": "47794",
         "remoteMachine": "localhost",
-        "mergingMode": "delta"
+        "mergingMode": "entire"
       },
       "MCHTracks": {
         "active": "%QC_TASK_TRACKS_ENABLE%",
@@ -155,14 +150,13 @@
         },
         "saveObjectsToFile": "qc-mch-tracks.root",
         "location": "local",
-        "mergingMode": "delta",
         "localControl": "odc",
         "localMachines": [
           "localhost"
         ],
         "remotePort": "47795",
         "remoteMachine": "localhost",
-        "mergingMode": "delta"
+        "mergingMode": "entire"
       }
     },
     "checks": {
