@@ -30,6 +30,8 @@ RUN_EVENT_DISPLAY=${RUN_EVENT_DISPLAY:-0}
 L3_CURRENT=${L3_CURRENT:-30000}
 DIPOLE_CURRENT=${DIPOLE_CURRENT:-6000}
 
+MAX_TF=${MAX_TF:--1}
+
 
 if [ x"${RUN_FULL_RECO}" = "x1" ]; then
    RUN_DIGITS_FILTER=1
@@ -60,9 +62,9 @@ CONFIG_TYPE=${CONFIG_TYPE:-pp}
 
 if [ x"${CONFIG_TYPE}" = "xpp" ]; then
 
-    DIGIT_FILTER_CONFIG="MCHDigitFilter.rejectBackground=true;MCHDigitFilter.timeOffset=142;MCHDigitFilter.minADC=1"
+    DIGIT_FILTER_CONFIG="MCHDigitFilter.rejectBackground=true;MCHDigitFilter.timeOffset=126;MCHDigitFilter.minADC=1"
     TIME_CLUSTERING_CONFIG="MCHTimeClusterizer.onlyTrackable=true;MCHTimeClusterizer.peakSearchSignalOnly=true"
-    CLUSTERING_CONFIG="MCHClustering.lowestPadCharge=1;MCHClustering.defaultClusterResolution=0.4"
+    CLUSTERING_CONFIG="MCHClustering.lowestPadCharge=10;MCHClustering.defaultClusterResolution=0.4"
     TRACKING_CONFIG="MCHTracking.chamberResolutionX=0.4;MCHTracking.chamberResolutionY=0.4;MCHTracking.sigmaCutForTracking=7.;MCHTracking.sigmaCutForImprovement=6."
 
 fi
@@ -160,7 +162,7 @@ QC_PROF=""
 #QC_PROF="--child-driver 'valgrind --tool=callgrind'"
 
 if [ $INPUT_TYPE = ctflist ]; then
-    WORKFLOW="o2-ctf-reader-workflow ${ARGS_ALL} --ctf-input \"$1\" --remote-regex \"^alien://.+\" --copy-cmd no-copy --onlyDet ${DETECTORS_LIST} --max-tf -1 --delay 0 | "
+    WORKFLOW="o2-ctf-reader-workflow ${ARGS_ALL} --ctf-input \"$1\" --remote-regex \"^alien://.+\" --copy-cmd no-copy --onlyDet ${DETECTORS_LIST} --max-tf ${MAX_TF} --delay 0 | "
     WORKFLOW+="o2-tfidinfo-writer-workflow ${ARGS_ALL} | "
 fi
 
@@ -183,6 +185,11 @@ if [ x"${RUN_FULL_RECO}" = "x1" ]; then
     if [ x"${RUN_MATCHING_MID}" = "x1" ]; then
 	WORKFLOW+="o2-mid-reco-workflow ${ARGS_ALL} --disable-mc --mid-tracker-keep-best | "
     fi
+
+    if [ x"${RUN_MATCHING_MFT}" = "x1" ]; then
+	WORKFLOW+="o2-mft-reco-workflow --clusters-from-upstream --disable-mc --configKeyValues \"MFTTracking.LTFclsRCut=0.01; MFTTracking.forceZeroField=false\" | "
+    fi
+
     WORKFLOW+="o2-muon-tracks-matcher-workflow ${ARGS_ALL} --disable-mc | "
     #WORKFLOW+="o2-muon-tracks-writer-workflow ${ARGS_ALL} | "
 
@@ -213,7 +220,11 @@ else
 		    WORKFLOW+="o2-mid-reco-workflow ${ARGS_ALL} --disable-mc --change-local-to-BC -2 | "
 		fi
 
-		if [ x"${RUN_MATCHING_MID}" = "x1" ]; then
+		if [ x"${RUN_MATCHING_MFT}" = "x1" ]; then
+		    WORKFLOW+="o2-mft-reco-workflow --clusters-from-upstream --disable-mc --configKeyValues \"MFTTracking.LTFclsRCut=0.01; MFTTracking.forceZeroField=false\" | "
+		fi
+
+		if [ x"${RUN_MATCHING_MID}" = "x1" -o x"${RUN_MATCHING_MFT}" = "x1" ]; then
 		    WORKFLOW+="o2-muon-tracks-matcher-workflow ${ARGS_ALL} --disable-mc --disable-root-input | "
 		    #WORKFLOW+="o2-muon-tracks-writer-workflow ${ARGS_ALL} | "
 		fi
