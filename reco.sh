@@ -252,19 +252,6 @@ else
 		WORKFLOW+="o2-mch-clusters-to-tracks-workflow ${ARGS_ALL} --l3Current ${L3_CURRENT} --dipoleCurrent ${DIPOLE_CURRENT} --configKeyValues \"${TRACKING_CONFIG}\" | "
 		WORKFLOW+="o2-mch-tracks-writer-workflow ${ARGS_ALL} | "
 		#WORKFLOW+="o2-mch-tracks-out-workflow ${ARGS_ALL} | "
-		
-		if [ x"${RUN_MATCHING_MID}" = "x1" ]; then
-		    WORKFLOW+="o2-mid-reco-workflow ${ARGS_ALL} --disable-mc --change-local-to-BC -2 | "
-		fi
-
-		if [ x"${RUN_MATCHING_MID}" = "x1" ]; then
-		    WORKFLOW+="o2-muon-tracks-matcher-workflow ${ARGS_ALL} --disable-mc --disable-root-input | "
-		    #WORKFLOW+="o2-muon-tracks-writer-workflow ${ARGS_ALL} | "
-		fi
-
-		if [ x"${RUN_EVENT_DISPLAY}" = "x1" ]; then
-		    WORKFLOW+="o2-eve-export-workflow ${ARGS_ALL} --display-tracks MCH,MID --display-clusters MCH,MID --jsons-folder EventDisplay --disable-mc --disable-root-input | "
-		fi
 	    fi
 	fi
     fi
