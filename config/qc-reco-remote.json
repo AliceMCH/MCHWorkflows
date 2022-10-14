@@ -27,7 +27,8 @@
           "query" : "digits:MCH/DIGITS"
         },
         "taskParameters" : {
-          "Diagnostic" : "false"
+          "Diagnostic" : "false",
+          "OnCycle" : "true"
         },
         "saveObjectsToFile": "qc-mch-digits.root",
         "location": "local",
@@ -37,7 +38,7 @@
         ],
         "remotePort": "47790",
         "remoteMachine": "localhost",
-        "mergingMode": "entire"
+        "mergingMode": "delta"
       },
       "MCHErrors": {
         "active": "%QC_TASK_ERRORS_ENABLE%",
@@ -60,7 +61,7 @@
         ],
         "remotePort": "47791",
         "remoteMachine": "localhost",
-        "mergingMode": "entire"
+        "mergingMode": "delta"
       },
       "MCHRofs": {
         "active": "%QC_TASK_ROFS_ENABLE%",
@@ -84,7 +85,7 @@
         ],
         "remotePort": "47792",
         "remoteMachine": "localhost",
-        "mergingMode": "entire"
+        "mergingMode": "delta"
       },
       "MCHFRofs": {
         "active": "%QC_TASK_ROFS_ENABLE%",
@@ -108,7 +109,7 @@
         ],
         "remotePort": "47793",
         "remoteMachine": "localhost",
-        "mergingMode": "entire"
+        "mergingMode": "delta"
       },
       "MCHPreclusters": {
         "active": "%QC_TASK_PRECLUSTERS_ENABLE%",
@@ -132,7 +133,7 @@
         ],
         "remotePort": "47794",
         "remoteMachine": "localhost",
-        "mergingMode": "entire"
+        "mergingMode": "delta"
       },
       "MCHTracks": {
         "active": "%QC_TASK_TRACKS_ENABLE%",
@@ -156,7 +157,7 @@
         ],
         "remotePort": "47795",
         "remoteMachine": "localhost",
-        "mergingMode": "entire"
+        "mergingMode": "delta"
       }
     },
     "checks": {

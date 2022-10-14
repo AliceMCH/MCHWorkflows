@@ -6,14 +6,14 @@ echo "SCRIPTDIR: ${SCRIPTDIR}"
 
 export XRD_REQUESTTIMEOUT=1200
 
-DTYPE=readout
-#DTYPE=tflist
+INPUT_TYPE=readout
+#INPUT_TYPE=tflist
 
 
 
 # Decoding setup
 DECOD_INSPEC="TF:MCH/RAWDATA"
-if [ x"$DTYPE" = "xreadout" ]; then
+if [ x"$INPUT_TYPE" = "xreadout" ]; then
     DECOD_INSPEC="readout:RDT/RAWDATA"
 fi
 
@@ -63,11 +63,11 @@ ARGS_ALL="--session default --shm-segment-size 16000000000"
 DECODER_PROF=""
 #DECODER_PROF="--child-driver 'valgrind --tool=callgrind'"
 
-if [ $DTYPE = readout ]; then
+if [ $INPUT_TYPE = readout ]; then
     WORKFLOW="o2-mch-cru-page-reader-workflow ${ARGS_ALL} --infile \"$1\" --full-tf | "
 fi
 
-if [ $DTYPE = tflist ]; then
+if [ $INPUT_TYPE = tflist ]; then
     WORKFLOW="o2-raw-tf-reader-workflow ${ARGS_ALL} --onlyDet MCH --input-data \"$1\" --remote-regex \"^alien://.+\" --delay 1 --loop 0 | "
 fi
 

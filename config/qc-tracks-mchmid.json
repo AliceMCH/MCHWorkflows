@@ -1,0 +1,24 @@
+{
+  "qc": {
+    "tasks": {
+      "MUONTracksTest": {
+        "active": "true",
+        "className": "o2::quality_control_modules::muon::TracksTask",
+        "moduleName": "QcMUONCommon",
+        "detectorName": "GLO",
+        "cycleDurationSeconds": "%QC_CYCLE_DURATION%",
+        "maxNumberCycles": "-1",
+        "dataSource": {
+          "type": "direct",
+          "query": "trackMCH:MCH/TRACKS;trackMCHROF:MCH/TRACKROFS;trackMCHTRACKCLUSTERS:MCH/TRACKCLUSTERS;mchtrackdigits:MCH/CLUSTERDIGITS;trackMID:MID/TRACKS;trackMIDROF:MID/TRACKROFS;trackMIDTRACKCLUSTERS:MID/TRACKCLUSTERS;trackClMIDROF:MID/TRCLUSROFS;matchMCHMID:GLO/MTC_MCHMID"
+        },
+        "taskParameters": {
+          "maxTracksPerTF": "600",
+          "GID" : "MCH,MID,MCH-MID"
+        },
+        "saveObjectsToFile": "qc-mchmid-tracks.root",
+        "location": "remote"
+      }
+    }
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "qc": {
+    "tasks": {
+      "MCHTracks": {
+        "active": "true",
+        "className": "o2::quality_control_modules::muonchambers::TracksTask",
+        "moduleName": "QcMuonChambers",
+        "detectorName": "MCH",
+        "cycleDurationSeconds": "%QC_CYCLE_DURATION%",
+        "maxNumberCycles": "-1",
+        "dataSource": {
+          "type": "direct",
+          "query" : "tracks:MCH/TRACKS;trackrofs:MCH/TRACKROFS;trackclusters:MCH/TRACKCLUSTERS;trackdigits:MCH/CLUSTERDIGITS"
+        },
+        "taskParameters" : {
+          "maxTracksPerTF": "5000"
+        },
+        "saveObjectsToFile": "qc-mch-tracks.root",
+        "location": "remote"
+      }
+    },
+    "postprocessing": {
+      "MCHTrendTracks": {
+        "active": "false",
+        "active2": "%QC_TASK_TRACKS_ENABLE%",
+        "className": "o2::quality_control_modules::muonchambers::TrendingTracks",
+        "moduleName": "QcMuonChambers",
+        "detectorName": "MCH",
+        "customization": [
+        ],
+        "dataSources": [
+          {
+            "type": "repository",
+            "path": "MCH/MO/MCHTracks",
+            "names": [
+              "TrackChi2OverNDF", "TracksPerTF", "ClustersPerTrack", "ClustersPerChamber"
+            ],
+            "reductorName": "o2::quality_control_modules::muonchambers::TH1MCHReductor",
+            "moduleName": "QcCommon"
+          }
+        ],
+        "plots": [
+          {
+            "name": "TracksNum",
+            "title": "Number of tracks",
+            "varexp": "TrackChi2OverNDF.entries:time",
+            "selection": "",
+            "option": "*L"
+          },
+          {
+            "name": "TracksPerTF",
+            "title": "Number of tracks per TF",
+            "varexp": "TracksPerTF.mean:time",
+            "selection": "",
+            "option": "*L"
+          },
+          {
+            "name": "ClustersPerTrack",
+            "title": "Number of clusters per track",
+            "varexp": "ClustersPerTrack.mean:time",
+            "selection": "",
+            "option": "*L"
+          }
+        ],
+        "initTrigger": [
+          "userorcontrol"
+        ],
+        "updateTrigger": [
+          "1min"
+        ],
+        "stopTrigger": [
+          "userorcontrol"
+        ]
+      }
+    }
+  }
+}

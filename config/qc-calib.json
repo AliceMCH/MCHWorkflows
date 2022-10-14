@@ -1,0 +1,57 @@
+{
+  "qc": {
+    "config": {
+      "database": {
+        "implementation": "CCDB",
+        "host": "localhost:8080",
+        "host2": "ccdb-test.cern.ch:8080",
+        "username": "not_applicable",
+        "password": "not_applicable",
+        "name": "not_applicable"
+      },
+      "Activity": {
+        "number": "42",
+        "type": "2"
+      }
+    },
+    "tasks": {
+      "MCHPedestals": {
+        "active": "true",
+        "className": "o2::quality_control_modules::muonchambers::PedestalsTask",
+        "moduleName": "QcMuonChambers",
+        "detectorName": "MCH",
+        "cycleDurationSeconds": "60",
+        "maxNumberCycles": "-1",
+        "dataSource": {
+          "type": "direct",
+          "query" : "digits:MCH/PDIGITS"
+        },
+        "saveObjectsToFile": "qc-mch-pedestals.root",
+        "location": "remote"
+      }
+    },
+    "checks": {
+      "QcCheckMCHPedestals": {
+        "active": "false",
+        "className": "o2::quality_control_modules::muonchambers::PedestalsCheck",
+        "moduleName": "QcMuonChambers",
+        "detectorName": "MCH",
+        "policy": "OnAny",
+        "checkParameters": {
+          "MinPedestal": "40",
+          "MaxPedestal": "250",
+          "MinGoodFraction": "0.8",
+          "MinGoodFractionPerDE": "0.4"
+        },
+        "dataSource": [{
+          "type": "Task",
+          "name": "MCHPedestals",
+          "MOs": "all"
+        }]
+      }
+    }
+  },
+  "dataSamplingPolicies": [
+
+  ]
+}

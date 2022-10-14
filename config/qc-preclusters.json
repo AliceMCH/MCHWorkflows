@@ -1,0 +1,37 @@
+{
+  "qc": {
+    "tasks": {
+      "MCHPreclusters": {
+        "active": "true",
+        "className": "o2::quality_control_modules::muonchambers::PhysicsTaskPreclusters",
+        "moduleName": "QcMuonChambers",
+        "detectorName": "MCH",
+        "cycleDurationSeconds": "%QC_CYCLE_DURATION%",
+        "maxNumberCycles": "-1",
+        "dataSource": {
+          "type": "direct",
+          "query": "preclusters:MCH/PRECLUSTERS/0;preclusterdigits:MCH/PRECLUSTERDIGITS/0"
+        },
+        "taskParameters" : {
+          "Diagnostic" : "false"
+        },
+        "saveObjectsToFile": "qc-mch-preclusters.root",
+        "location": "remote"
+      }
+    },
+    "checks": {
+      "QcCheckMCHPreclusters": {
+        "active": "%QC_TASK_PRECLUSTERS_ENABLE%",
+        "className": "o2::quality_control_modules::muonchambers::PhysicsPreclustersCheck",
+        "moduleName": "QcMuonChambers",
+        "detectorName": "MCH",
+        "policy": "OnAny",
+        "dataSource": [{
+          "type": "Task",
+          "name": "MCHPreclusters",
+          "MOs" : "all"
+        }]
+      }
+    }
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "qc": {
+    "tasks": {
+      "MCHDigits": {
+        "active": "true",
+        "className": "o2::quality_control_modules::muonchambers::PhysicsTaskDigits",
+        "moduleName": "QcMuonChambers",
+        "detectorName": "MCH",
+        "cycleDurationSeconds": "%QC_CYCLE_DURATION%",
+        "maxNumberCycles": "-1",
+        "dataSource": {
+          "type": "direct",
+          "query": "digits:MCH/DIGITS"
+        },
+        "taskParameters" : {
+          "Diagnostic" : "false",
+          "OnCycle" : "false"
+        },
+        "saveObjectsToFile": "qc-mch-digits.root",
+        "location": "remote"
+      }
+    },
+    "checks": {
+      "QcCheckMCHDigits": {
+        "active": "false",
+        "className": "o2::quality_control_modules::muonchambers::PhysicsCheck",
+        "moduleName": "QcMuonChambers",
+        "detectorName": "MCH",
+        "policy": "OnAny",
+        "checkParameters": {
+          "MinOccupancy": "0.01",
+          "MaxOccupancy": "10",
+          "MinGoodFraction": "0.9",
+          "OccupancyPlotScaleMin": "0.0001",
+          "OccupancyPlotScaleMax": "1",
+          "Verbose": "false"
+        },
+        "dataSource": [
+          {
+            "type": "Task",
+            "name": "MCHDigits",
+            "MOs" : "all"
+          }
+        ]
+      }
+    }
+  }
+}

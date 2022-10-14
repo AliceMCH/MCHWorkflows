@@ -1,0 +1,39 @@
+{
+  "qc": {
+    "tasks": {
+      "QcTaskMCHErrors": {
+        "active": "true",
+        "className": "o2::quality_control_modules::muonchambers::DecodingErrorsTask",
+        "moduleName": "QcMuonChambers",
+        "detectorName": "MCH",
+        "cycleDurationSeconds": "%QC_CYCLE_DURATION%",
+        "maxNumberCycles": "-1",
+        "dataSource": {
+          "type": "direct",
+          "query": "rawerrors:MCH/ERRORS;hbpackets:MCH/HBPACKETS"
+        },
+        "taskParameters" : {
+          "HBExpectedBc" : "456190"
+        },
+        "location": "remote"
+      }
+    },
+    "checks": {
+      "QcCheckMCHErrors": {
+        "active": "true",
+        "className": "o2::quality_control_modules::muonchambers::DecodingErrorsCheck",
+        "moduleName": "QcMuonChambers",
+        "detectorName": "MCH",
+        "policy": "OnAny",
+        "checkParameters": {
+          "MaxErrorRate": "100"
+        },
+        "dataSource": [{
+          "type": "Task",
+          "name": "QcTaskMCHErrors",
+          "MOs" : ["DecodingErrorsPerFeeId", "DecodingErrorsPerChamber", "SynchErrorsPerDE", "SynchErrorsPerChamber"]
+        }]
+      }
+    }
+  }
+}

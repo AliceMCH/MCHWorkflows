@@ -1,0 +1,40 @@
+{
+  "qc": {
+    "tasks": {
+      "MCHRofs": {
+        "active": "true",
+        "className": "o2::quality_control_modules::muonchambers::PhysicsTaskRofs",
+        "moduleName": "QcMuonChambers",
+        "detectorName": "MCH",
+        "cycleDurationSeconds": "%QC_CYCLE_DURATION%",
+        "maxNumberCycles": "-1",
+        "dataSource": {
+          "type": "direct",
+          "query" : "digits:MCH/DIGITS;rofs:MCH/DIGITROFS"
+        },
+        "taskParameters" : {
+          "Diagnostic" : "false"
+        },
+        "saveObjectsToFile": "qc-mch-rofs.root",
+        "location": "remote"
+      },
+      "MCHFRofs": {
+        "active": "true",
+        "className": "o2::quality_control_modules::muonchambers::PhysicsTaskRofs",
+        "moduleName": "QcMuonChambers",
+        "detectorName": "MCH",
+        "cycleDurationSeconds": "%QC_CYCLE_DURATION%",
+        "maxNumberCycles": "-1",
+        "dataSource": {
+          "type": "direct",
+          "query" : "digits:MCH/F-DIGITS;rofs:MCH/TC-F-DIGITROFS"
+        },
+        "taskParameters" : {
+          "Diagnostic" : "false"
+        },
+        "saveObjectsToFile": "qc-mch-rofs-filtered.root",
+        "location": "remote"
+      }
+    }
+  }
+}
