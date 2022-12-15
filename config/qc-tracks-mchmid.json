@@ -1,7 +1,7 @@
 {
   "qc": {
     "tasks": {
-      "MUONTracksTest": {
+      "MUONTracks": {
         "active": "true",
         "className": "o2::quality_control_modules::muon::TracksTask",
         "moduleName": "QcMUONCommon",

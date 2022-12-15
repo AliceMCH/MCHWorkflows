@@ -3,12 +3,15 @@
     "config": {
       "database": {
         "implementation": "CCDB",
-        "host2": "localhost:8080",
-        "host": "ccdb-test.cern.ch:8080",
+        "host": "localhost:8080",
+        "host2": "ccdb-test.cern.ch:8080",
         "username": "not_applicable",
         "password": "not_applicable",
         "name": "not_applicable",
-        "maxObjectSize": "6291456"
+        "maxObjectSize": "12582912"
+      },
+      "conditionDB": {
+        "url": "alice-ccdb.cern.ch"
       },
       "Activity": {
         "number": "42",
@@ -20,6 +23,8 @@
     "postprocessing": {
     },
     "checks": {
+    },
+    "aggregators": {
     }
   },
   "dataSamplingPolicies": [
