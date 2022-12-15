@@ -3,10 +3,10 @@
 EventDisplay
 Outputs
 Simulation
+QC-*
 qc.json
 *.txt
 *.root
-*/*.root
 *.pdf
 *.png
 */*.pdf
@@ -17,5 +17,6 @@ dpl-config.json
 */dpl-config.json
 core_dump*
 */core_dump*
-QC-example
 QC-*
+callgrind.*
+config-*
