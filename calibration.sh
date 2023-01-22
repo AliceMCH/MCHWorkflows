@@ -6,8 +6,8 @@ echo "SCRIPTDIR: ${SCRIPTDIR}"
 
 export XRD_REQUESTTIMEOUT=1200
 
-INPUT_TYPE=readout
-#INPUT_TYPE=tflist
+#INPUT_TYPE=readout
+INPUT_TYPE=tflist
 
 
 
@@ -19,7 +19,7 @@ fi
 
 USE_CUSTOM_MAPPING=${USE_CUSTOM_MAPPING:-0}
 
-RUN_CALIBRATOR=${RUN_CALIBRATOR:-0}
+RUN_CALIBRATOR=${RUN_CALIBRATOR:-1}
 
 MAP_OPT=""
 if [ x"${USE_CUSTOM_MAPPING}" = "x1" ]; then
@@ -27,7 +27,7 @@ if [ x"${USE_CUSTOM_MAPPING}" = "x1" ]; then
 fi
 
 
-CALIBRATOR_CONFIG="MCHBadChannelCalibratorParam.minRequiredNofEntriesPerChannel=100;MCHBadChannelCalibratorParam.minRequiredCalibratedFraction=0.4;MCHBadChannelCalibratorParam.onlyAtEndOfStream=false"
+CALIBRATOR_CONFIG="MCHBadChannelCalibratorParam.minRequiredNofEntriesPerChannel=10;MCHBadChannelCalibratorParam.minRequiredCalibratedFraction=0.4;MCHBadChannelCalibratorParam.onlyAtEndOfStream=true"
 
 
 # QC setup
@@ -38,11 +38,10 @@ RUN_QC_MERGER=${RUN_QC_MERGER:-0}
 
 
 # Set-up QC environment
-if [ x"${RUN_QC_MERGER}" = "x1" ]; then
-    QCCONF=config/qc-calib-remote.json
-    ARGS_QC="--local --host localhost"
-else
+if [ x"${RUN_CALIBRATOR}" = "x1" ]; then
     QCCONF=config/qc-calib.json
+else
+    QCCONF=config/qc-calib-digits.json
     ARGS_QC=""
 fi
 

@@ -21,8 +21,8 @@
       }
     },
     "checks": {
-      "QcCheckMCHDigits": {
-        "active": "false",
+      "CheckMCHDigits": {
+        "active": "true",
         "className": "o2::quality_control_modules::muonchambers::PhysicsCheck",
         "moduleName": "QcMuonChambers",
         "detectorName": "MCH",

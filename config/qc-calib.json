@@ -24,7 +24,7 @@
         "maxNumberCycles": "-1",
         "dataSource": {
           "type": "direct",
-          "query" : "digits:MCH/PDIGITS"
+          "query" : "pedestals:MCH/PEDESTALS"
         },
         "saveObjectsToFile": "qc-mch-pedestals.root",
         "location": "remote"

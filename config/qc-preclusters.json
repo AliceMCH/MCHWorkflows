@@ -1,8 +1,9 @@
 {
   "qc": {
     "tasks": {
-      "MCHPreclusters": {
+      "TaskMCHPreclusters": {
         "active": "true",
+        "taskName_": "MCHPreclusters",
         "className": "o2::quality_control_modules::muonchambers::PhysicsTaskPreclusters",
         "moduleName": "QcMuonChambers",
         "detectorName": "MCH",
@@ -20,15 +21,21 @@
       }
     },
     "checks": {
-      "QcCheckMCHPreclusters": {
-        "active": "%QC_TASK_PRECLUSTERS_ENABLE%",
+      "CheckMCHPreclusters": {
+        "active": "true",
         "className": "o2::quality_control_modules::muonchambers::PhysicsPreclustersCheck",
         "moduleName": "QcMuonChambers",
         "detectorName": "MCH",
         "policy": "OnAny",
+        "checkParameters": {
+          "MinPseudoefficiency": "0.8",
+          "MinGoodFraction": "0.9",
+          "PseudoeffPlotScaleMin": "0.0",
+          "PseudoeffPlotScaleMax": "1.2"
+        },
         "dataSource": [{
           "type": "Task",
-          "name": "MCHPreclusters",
+          "name": "TaskMCHPreclusters",
           "MOs" : "all"
         }]
       }

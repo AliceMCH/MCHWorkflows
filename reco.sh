@@ -226,7 +226,7 @@ QC_PROF=""
 #QC_PROF="--child-driver 'valgrind --tool=memcheck'"
 
 CONDITION_REMAP=""
-CONDITION_REMAP="--condition-remap file://.=GLO/Config/GeometryAligned"
+#CONDITION_REMAP="--condition-remap file://.=GLO/Config/GeometryAligned"
 
 if [ $INPUT_TYPE = ctflist ]; then
     WORKFLOW="o2-ctf-reader-workflow ${ARGS_ALL} --ctf-input \"$1\" --remote-regex \"^alien://.+\" --copy-cmd no-copy --onlyDet ${DETECTORS_LIST} --max-tf ${MAX_TF} --delay $TFDELAY ${CONDITION_REMAP} | "
@@ -283,14 +283,16 @@ fi
 
 if [ x"${RECO_MFT}" = "x1" ]; then
 
-    WORKFLOW+="o2-mft-reco-workflow ${ARGS_ALL} --clusters-from-upstream --disable-mc --configKeyValues \"MFTTracking.LTFclsRCut=0.01; MFTTracking.forceZeroField=false\" | "
+    WORKFLOW+="o2-mft-reco-workflow ${ARGS_ALL} --clusters-from-upstream --disable-mc --disable-root-output --configKeyValues \"MFTTracking.LTFclsRCut=0.01; MFTTracking.forceZeroField=false\" | "
 
     if [ x"${RECO_MID}" = "x1" ]; then
 	MFTMCHConf="FwdMatching.useMIDMatch=true;"
     else
 	MFTMCHConf="FwdMatching.useMIDMatch=false;"
     fi
-    WORKFLOW+="o2-globalfwd-matcher-workflow ${ARGS_ALL} --disable-mc --disable-root-input --enable-match-output --configKeyValues \"$MFTMCHConf\" | "
+    #MFTMCHConf+="FwdMatching.matchFcn=\"matchNeedsName\";"
+    MFTMCHConf+="FwdMatching.cutFcn=\"cut3SigmaXYAngles\";"
+    WORKFLOW+="o2-globalfwd-matcher-workflow ${ARGS_ALL} --disable-mc --disable-root-input --enable-match-output --disable-root-output --configKeyValues \"$MFTMCHConf\" | "
 
 fi
 
