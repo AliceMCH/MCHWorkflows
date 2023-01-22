@@ -1,44 +1,127 @@
 {
   "qc": {
     "tasks": {
-      "MCHDigits": {
+      "TaskMCHDigits": {
         "active": "true",
-        "className": "o2::quality_control_modules::muonchambers::PhysicsTaskDigits",
+        "taskName": "Digits",
+        "className": "o2::quality_control_modules::muonchambers::DigitsTask",
         "moduleName": "QcMuonChambers",
         "detectorName": "MCH",
         "cycleDurationSeconds": "%QC_CYCLE_DURATION%",
         "maxNumberCycles": "-1",
         "dataSource": {
           "type": "direct",
-          "query": "digits:MCH/DIGITS"
+          "query": "digits:MCH/DIGITS",
+          "type2": "dataSamplingPolicy",
+          "name2": "digits"
         },
         "taskParameters" : {
           "Diagnostic" : "false",
-          "OnCycle" : "false"
+          "OnCycle" : "true"
         },
         "saveObjectsToFile": "qc-mch-digits.root",
         "location": "remote"
       }
     },
-    "checks": {
-      "CheckMCHDigits": {
+    "postprocessing": {
+      "Digits": {
         "active": "true",
-        "className": "o2::quality_control_modules::muonchambers::PhysicsCheck",
+        "className": "o2::quality_control_modules::muonchambers::DigitsPostProcessing",
+        "moduleName": "QcMuonChambers",
+        "detectorName": "MCH",
+        "customization": [
+          {
+            "name": "FullHistos",
+            "value": "0"
+          },
+          {
+            "name": "ChannelRateMin",
+            "value": "0.00001"
+          },
+          {
+            "name": "ChannelRateMax",
+            "value": "10"
+          },
+          {
+            "name": "ReferenceTimeStamp",
+            "value": "1669672094149"
+          },
+          {
+            "name": "_ReferenceDate",
+            "value": "2022/11/16 16:41:00"
+          }
+        ],
+        "dataSources": [
+          {
+            "type": "repository",
+            "path": "MCH/MO/Digits",
+            "names": [
+              "rate:Occupancy_Elec", "rate_signal:OccupancySignal_Elec", "orbits:DigitOrbitInTF", "orbits_signal:DigitSignalOrbitInTF"
+            ],
+            "reductorName": "o2::quality_control_modules::muonchambers::TH2ElecMapReductor",
+            "moduleName": "QcMuonChambers"
+          }
+        ],
+        "plots": [
+        ],
+        "initTrigger": [
+          "userorcontrol"
+        ],
+        "updateTrigger": [
+          "%QC_CYCLE_DURATION%sec"
+        ],
+        "updateTrigger_": [
+          "newobject:qcdb:MCH/MO/MCHDigitsTask/Occupancy_Elec",
+          "newobject:qcdb:MCH/MO/MCHDigitsTask/OccupancySignal_Elec",
+          "newobject:qcdb:MCH/MO/MCHDigitsTask/DigitOrbitInTF",
+          "newobject:qcdb:MCH/MO/MCHDigitsTask/DigitSignalOrbitInTF"
+        ],
+        "stopTrigger": [
+          "userorcontrol"
+        ]
+      }
+    },
+    "checks": {
+      "CheckTaskMCHDigits": {
+        "active": "false",
+        "className": "o2::quality_control_modules::muonchambers::DigitsCheck",
         "moduleName": "QcMuonChambers",
         "detectorName": "MCH",
         "policy": "OnAny",
         "checkParameters": {
-          "MinOccupancy": "0.01",
-          "MaxOccupancy": "10",
+          "MinRate": "0.01",
+          "MaxRate": "10",
           "MinGoodFraction": "0.9",
-          "OccupancyPlotScaleMin": "0.0001",
-          "OccupancyPlotScaleMax": "1",
+          "RatePlotScaleMin": "0.0001",
+          "RatePlotScaleMax": "10",
           "Verbose": "false"
         },
         "dataSource": [
           {
             "type": "Task",
-            "name": "MCHDigits",
+            "name": "TaskMCHDigits",
+            "MOs" : "all"
+          }
+        ]
+      },
+      "CheckMCHDigits": {
+        "active": "true",
+        "className": "o2::quality_control_modules::muonchambers::DigitsCheck",
+        "moduleName": "QcMuonChambers",
+        "detectorName": "MCH",
+        "policy": "OnAll",
+        "checkParameters": {
+          "MinRate": "0.01",
+          "MaxRate": "10",
+          "MinGoodFraction": "0.9",
+          "RatePlotScaleMin": "0.0001",
+          "RatePlotScaleMax": "10",
+          "Verbose": "false"
+        },
+        "dataSource": [
+          {
+            "type": "PostProcessing",
+            "name": "Digits",
             "MOs" : "all"
           }
         ]

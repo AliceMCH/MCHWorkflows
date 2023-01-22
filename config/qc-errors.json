@@ -1,8 +1,9 @@
 {
   "qc": {
     "tasks": {
-      "TaskMCHDiagnostics": {
+      "MCHDecoding": {
         "active": "true",
+        "taskName": "Decoding",
         "className": "o2::quality_control_modules::muonchambers::DiagnosticsTask",
         "moduleName": "QcMuonChambers",
         "detectorName": "MCH",
@@ -19,7 +20,7 @@
       }
     },
     "postprocessing": {
-      "MCHDiagnostics": {
+      "Decoding": {
         "active": "true",
         "className": "o2::quality_control_modules::muonchambers::DiagnosticsPostProcessing",
         "moduleName": "QcMuonChambers",
@@ -73,7 +74,7 @@
         },
         "dataSource": [{
           "type": "Task",
-          "name": "TaskMCHDiagnostics",
+          "name": "MCHDecoding",
           "MOs" : ["DecodingErrorsPerFeeId", "DecodingErrorsPerChamber", "SynchErrorsPerDE", "SynchErrorsPerChamber"]
         }]
       }
