@@ -24,8 +24,8 @@ RECO_MFT=${RECO_MFT:-1}
 
 RUN_DIGITS_FILTER=${RUN_DIGITS_FILTER:-1}
 RUN_PRECLUSTERING=${RUN_PRECLUSTERING:-1}
-RUN_CLUSTERING=${RUN_CLUSTERING:-0}
-RUN_TRACKING=${RUN_TRACKING:-0}
+RUN_CLUSTERING=${RUN_CLUSTERING:-1}
+RUN_TRACKING=${RUN_TRACKING:-1}
 RUN_EVENT_DISPLAY=${RUN_EVENT_DISPLAY:-0}
 
 L3_CURRENT=${L3_CURRENT:-30000}
@@ -71,10 +71,10 @@ if [ x"${CONFIG_TYPE}" = "xpp" ]; then
 
     DIGIT_FILTER_CONFIG="MCHDigitFilter.rejectBackground=true;MCHDigitFilter.timeOffset=120;MCHDigitFilter.minADC=1"
     TIME_CLUSTERING_CONFIG="MCHTimeClusterizer.onlyTrackable=true;MCHTimeClusterizer.peakSearchSignalOnly=true"
-    #CLUSTERING_CONFIG="MCHClustering.lowestPadCharge=10;MCHClustering.defaultClusterResolution=0.4"
-    #TRACKING_CONFIG="MCHTracking.chamberResolutionX=0.4;MCHTracking.chamberResolutionY=0.4;MCHTracking.sigmaCutForTracking=7.;MCHTracking.sigmaCutForImprovement=6."
-    CLUSTERING_CONFIG="MCHClustering.lowestPadCharge=10;MCHClustering.defaultClusterResolution=0.07"
-    TRACKING_CONFIG="MCHTracking.chamberResolutionX=0.07;MCHTracking.chamberResolutionY=0.07;MCHTracking.sigmaCutForTracking=7.;MCHTracking.sigmaCutForImprovement=6."
+    CLUSTERING_CONFIG="MCHClustering.lowestPadCharge=10;MCHClustering.defaultClusterResolution=0.4"
+    TRACKING_CONFIG="MCHTracking.chamberResolutionX=0.4;MCHTracking.chamberResolutionY=0.4;MCHTracking.sigmaCutForTracking=7.;MCHTracking.sigmaCutForImprovement=6."
+    #CLUSTERING_CONFIG="MCHClustering.lowestPadCharge=10;MCHClustering.defaultClusterResolution=0.07"
+    #TRACKING_CONFIG="MCHTracking.chamberResolutionX=0.07;MCHTracking.chamberResolutionY=0.07;MCHTracking.sigmaCutForTracking=7.;MCHTracking.sigmaCutForImprovement=6."
 
 fi
 
@@ -161,44 +161,59 @@ echo "QC_TASK_TRACKS_MFTMCHMID_ENABLE=${QC_TASK_TRACKS_MFTMCHMID_ENABLE}"
 CONFIG_DIR="config"
 #CONFIG_DIR="config-ref"
 
-# Set-up QC environment
-if [ x"${RUN_QC_MERGER}" = "x1" ]; then
-    QCCONF=config/qc-reco-remote.json
-    ARGS_QC="--local --host localhost"
-else
-    QCCONF="${CONFIG_DIR}/qc-base.json "
-    if [ x"$QC_TASK_DIGITS_ENABLE" = "x1" ]; then
-	QCCONF+="${CONFIG_DIR}/qc-digits.json "
+QCCONF="${CONFIG_DIR}/qc-base.json "
+QCCONFREM=""
+if [ x"$QC_TASK_DIGITS_ENABLE" = "x1" ]; then
+    QCCONF+="${CONFIG_DIR}/qc-digits.json "
+    if [ x"${RUN_QC_MERGER}" = "x1" ]; then
+	QCCONFREM+="${CONFIG_DIR}/qc-digits-remote.json "
     fi
-    if [ x"${INPUT_TYPE}" = "xreadout" ]; then
-	QCCONF+="${CONFIG_DIR}/qc-errors.json "
-    fi
-    if [ x"$QC_TASK_ROFS_ENABLE" = "x10" ]; then
-	QCCONF+="${CONFIG_DIR}/qc-rofs.json "
-    fi
-    if [ x"$QC_TASK_PRECLUSTERS_ENABLE" = "x1" ]; then
-	QCCONF+="${CONFIG_DIR}/qc-preclusters.json "
-    fi
-    if [ x"${RUN_TRACKING}" = "x1" ]; then
-	QCCONF+="${CONFIG_DIR}/qc-tracks-mch.json "
-    fi
-    if [ x"$QC_TASK_TRACKS_MFTMCH_ENABLE" = "x1" ]; then
-	QCCONF+="${CONFIG_DIR}/qc-tracks-mftmch.json "
-    fi
-    if [ x"$QC_TASK_TRACKS_MCHMID_ENABLE" = "x1" ]; then
-	QCCONF+="${CONFIG_DIR}/qc-tracks-mchmid.json "
-    fi
-    if [ x"$QC_TASK_TRACKS_MFTMCHMID_ENABLE" = "x1" ]; then
-	QCCONF+="${CONFIG_DIR}/qc-tracks-mftmchmid.json "
-    fi
-    QCCONF+="${CONFIG_DIR}/qc-quality.json "
-    ARGS_QC=""
 fi
+if [ x"${INPUT_TYPE}" = "xreadout" ]; then
+    QCCONF+="${CONFIG_DIR}/qc-errors.json "
+    if [ x"${RUN_QC_MERGER}" = "x1" ]; then
+	QCCONFREM+="${CONFIG_DIR}/qc-errors-remote.json "
+    fi
+fi
+if [ x"$QC_TASK_ROFS_ENABLE" = "x1" ]; then
+    QCCONF+="${CONFIG_DIR}/qc-rofs.json "
+    if [ x"${RUN_QC_MERGER}" = "x1" ]; then
+	QCCONFREM+="${CONFIG_DIR}/qc-rofs-remote.json "
+    fi
+fi
+if [ x"$QC_TASK_PRECLUSTERS_ENABLE" = "x1" ]; then
+    QCCONF+="${CONFIG_DIR}/qc-preclusters.json "
+    if [ x"${RUN_QC_MERGER}" = "x1" ]; then
+	QCCONFREM+="${CONFIG_DIR}/qc-preclusters-remote.json "
+    fi
+fi
+if [ x"${RUN_TRACKING}" = "x1" ]; then
+    QCCONF+="${CONFIG_DIR}/qc-tracks-mch.json "
+fi
+if [ x"$QC_TASK_TRACKS_MFTMCH_ENABLE" = "x1" ]; then
+    QCCONF+="${CONFIG_DIR}/qc-tracks-mftmch.json "
+fi
+if [ x"$QC_TASK_TRACKS_MCHMID_ENABLE" = "x1" ]; then
+    QCCONF+="${CONFIG_DIR}/qc-tracks-mchmid.json "
+fi
+if [ x"$QC_TASK_TRACKS_MFTMCHMID_ENABLE" = "x1" ]; then
+    QCCONF+="${CONFIG_DIR}/qc-tracks-mftmchmid.json "
+fi
+QCCONF+="${CONFIG_DIR}/qc-quality.json "
+ARGS_QC=""
 
 jq -n 'reduce inputs as $s (input; .qc.tasks += ($s.qc.tasks) | .qc.checks += ($s.qc.checks) | .qc.aggregators += ($s.qc.aggregators)  | .qc.externalTasks += ($s.qc.externalTasks) | .qc.postprocessing += ($s.qc.postprocessing)| .dataSamplingPolicies += ($s.dataSamplingPolicies))' $QCCONF > qc-temp.json
 if [[ $? != 0 ]]; then
     echo "Merging QC workflow failed"
     exit 1
+fi
+if [ x"${RUN_QC_MERGER}" = "x1" ]; then
+    jq -n 'reduce inputs as $item ({}; . *= $item)' qc-temp.json $QCCONFREM > qc-temp2.json
+    if [[ $? != 0 ]]; then
+	echo "Merging QC workflow failed"
+	exit 1
+    fi
+    cp qc-temp2.json qc-temp.json
 fi
 
 # create the QC configuration from template
@@ -261,7 +276,8 @@ else
 	
 	if [ x"$RUN_CLUSTERING" = "x1" ]; then
 	    WORKFLOW+="o2-mch-preclusters-to-clusters-original-workflow ${ARGS_ALL} --configKeyValues \"${CLUSTERING_CONFIG}\" ${CLUSTERING_PROF} | "
-	    WORKFLOW+="o2-mch-clusters-transformer-workflow ${ARGS_ALL} --mch-disable-geometry-from-ccdb --geometry o2sim_geometry-alignedReAlign7.root | "
+	    #WORKFLOW+="o2-mch-clusters-transformer-workflow ${ARGS_ALL} --mch-disable-geometry-from-ccdb --geometry o2sim_geometry-alignedReAlign7.root | "
+	    WORKFLOW+="o2-mch-clusters-transformer-workflow ${ARGS_ALL} --mch-disable-geometry-from-ccdb --geometry o2sim_geometry-aligned.root | "
 	    
 	    if [ x"$RUN_TRACKING" = "x1" ]; then
 		WORKFLOW+="o2-mch-clusters-to-tracks-workflow ${ARGS_ALL} --digits --l3Current ${L3_CURRENT} --dipoleCurrent ${DIPOLE_CURRENT} --configKeyValues \"${TRACKING_CONFIG}\" | "
@@ -309,5 +325,5 @@ fi
 WORKFLOW+="o2-dpl-run ${ARGS_ALL} --batch --run"
 #WORKFLOW+="o2-dpl-run ${ARGS_ALL} --batch --dump"
 
-echo $WORKFLOW
+echo $WORKFLOW > workflow.txt
 eval $WORKFLOW

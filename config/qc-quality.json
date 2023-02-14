@@ -1,0 +1,59 @@
+{
+  "qc": {
+    "aggregators": {
+      "MCHAggregator": {
+        "active": "true",
+        "className": "o2::quality_control_modules::muonchambers::MCHAggregator",
+        "moduleName": "QcMuonChambers",
+        "policy": "OnAll",
+        "detectorName": "MCH",
+        "dataSource": [
+        {
+          "type": "Check",
+          "name": "MCHDigitsCheck"
+        },
+        {
+          "type": "Check",
+          "name": "MCHPreclustersCheck"
+        }]
+      }
+    },
+    "postprocessing": {
+      "MCHQuality": {
+        "active": "true",
+        "className": "o2::quality_control_modules::muonchambers::QualityPostProcessing",
+        "moduleName": "QcMuonChambers",
+        "detectorName": "MCH",
+        "dataSources": [
+          {
+            "type": "repository",
+            "path": "MCH/QO",
+            "names": [
+              "decoding:MCHDecodingCheck", "digits:MCHDigitsCheck", "preclusters:MCHPreclustersCheck"
+            ],
+            "reductorName": "o2::quality_control_modules::muonchambers::TH2ElecMapReductor",
+            "moduleName": "QcMuonChambers"
+          },
+          {
+            "type": "repository",
+            "path": "MCH/QO/MCHAggregator",
+            "name": "mch:MCHQuality",
+            "reductorName": "o2::quality_control_modules::muonchambers::TH2ElecMapReductor",
+            "moduleName": "QcMuonChambers"
+          }
+        ],
+        "plots": [
+        ],
+        "initTrigger": [
+          "userorcontrol"
+        ],
+        "updateTrigger": [
+          "%QC_CYCLE_DURATION%sec"
+        ],
+        "stopTrigger": [
+          "userorcontrol"
+        ]
+      }
+    }
+  }
+}

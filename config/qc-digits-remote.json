@@ -1,0 +1,16 @@
+{
+  "qc": {
+    "tasks": {
+      "TaskMCHDigits": {
+        "location": "local",
+        "localControl": "odc",
+        "localMachines": [
+          "localhost"
+        ],
+        "remotePort": "47790",
+        "remoteMachine": "localhost",
+        "mergingMode": "delta"
+      }
+    }
+  }
+}

@@ -1,9 +1,9 @@
 {
   "qc": {
     "tasks": {
-      "MCHRofs": {
+      "Rofs": {
         "active": "true",
-        "className": "o2::quality_control_modules::muonchambers::PhysicsTaskRofs",
+        "className": "o2::quality_control_modules::muonchambers::RofsTask",
         "moduleName": "QcMuonChambers",
         "detectorName": "MCH",
         "cycleDurationSeconds": "%QC_CYCLE_DURATION%",
@@ -18,9 +18,9 @@
         "saveObjectsToFile": "qc-mch-rofs.root",
         "location": "remote"
       },
-      "MCHFRofs": {
+      "FRofs": {
         "active": "true",
-        "className": "o2::quality_control_modules::muonchambers::PhysicsTaskRofs",
+        "className": "o2::quality_control_modules::muonchambers::RofsTask",
         "moduleName": "QcMuonChambers",
         "detectorName": "MCH",
         "cycleDurationSeconds": "%QC_CYCLE_DURATION%",

@@ -104,15 +104,19 @@
           }
         ]
       },
-      "CheckMCHDigits": {
+      "MCHDigitsCheck": {
         "active": "true",
         "className": "o2::quality_control_modules::muonchambers::DigitsCheck",
         "moduleName": "QcMuonChambers",
         "detectorName": "MCH",
         "policy": "OnAll",
         "checkParameters": {
+          "MeanRateHistName": "RatesSignal/OnCycle/MeanRate",
+          "MeanRateRatioHistName": "RatesSignal/OnCycle/MeanRateRefRatio",
+          "BadChanFracHistName": "RatesSignal/OnCycle/BadChannelsFraction",
           "MinRate": "0.01",
-          "MaxRate": "10",
+          "MaxRate": "1",
+          "MaxRateDelta": "0.1",
           "MinGoodFraction": "0.9",
           "RatePlotScaleMin": "0.0001",
           "RatePlotScaleMax": "10",

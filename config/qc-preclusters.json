@@ -3,8 +3,8 @@
     "tasks": {
       "TaskMCHPreclusters": {
         "active": "true",
-        "taskName_": "MCHPreclusters",
-        "className": "o2::quality_control_modules::muonchambers::PhysicsTaskPreclusters",
+        "taskName": "Preclusters",
+        "className": "o2::quality_control_modules::muonchambers::PreclustersTask",
         "moduleName": "QcMuonChambers",
         "detectorName": "MCH",
         "cycleDurationSeconds": "%QC_CYCLE_DURATION%",
@@ -13,29 +13,76 @@
           "type": "direct",
           "query": "preclusters:MCH/PRECLUSTERS/0;preclusterdigits:MCH/PRECLUSTERDIGITS/0"
         },
-        "taskParameters" : {
-          "Diagnostic" : "false"
-        },
         "saveObjectsToFile": "qc-mch-preclusters.root",
         "location": "remote"
       }
     },
-    "checks": {
-      "CheckMCHPreclusters": {
+    "postprocessing": {
+      "Preclusters": {
         "active": "true",
-        "className": "o2::quality_control_modules::muonchambers::PhysicsPreclustersCheck",
+        "className": "o2::quality_control_modules::muonchambers::PreclustersPostProcessing",
+        "moduleName": "QcMuonChambers",
+        "detectorName": "MCH",
+        "customization": [
+          {
+            "name": "FullHistos",
+            "value": "0"
+          },
+          {
+            "name": "ReferenceTimeStamp",
+            "value": "1669672094149"
+          },
+          {
+            "name": "_ReferenceDate",
+            "value": "2022/11/16 16:41:00"
+          }
+        ],
+        "dataSources": [
+          {
+            "type": "repository",
+            "path": "MCH/MO/Preclusters",
+            "names": [
+              "eff:Pseudoeff_Elec", "clcharge:ClusterChargeHist", "clsize:ClusterSizeHist"
+            ],
+            "reductorName": "o2::quality_control_modules::muonchambers::TH2ElecMapReductor",
+            "moduleName": "QcMuonChambers"
+          }
+        ],
+        "plots": [
+        ],
+        "initTrigger": [
+          "userorcontrol"
+        ],
+        "updateTrigger": [
+          "%QC_CYCLE_DURATION%sec"
+        ],
+        "updateTrigger_": [
+          "newobject:qcdb:MCH/MO/MCHDigitsTask/Occupancy_Elec",
+          "newobject:qcdb:MCH/MO/MCHDigitsTask/OccupancySignal_Elec",
+          "newobject:qcdb:MCH/MO/MCHDigitsTask/DigitOrbitInTF",
+          "newobject:qcdb:MCH/MO/MCHDigitsTask/DigitSignalOrbitInTF"
+        ],
+        "stopTrigger": [
+          "userorcontrol"
+        ]
+      }
+    },
+    "checks": {
+      "MCHPreclustersCheck": {
+        "active": "true",
+        "className": "o2::quality_control_modules::muonchambers::PreclustersCheck",
         "moduleName": "QcMuonChambers",
         "detectorName": "MCH",
         "policy": "OnAny",
         "checkParameters": {
-          "MinPseudoefficiency": "0.8",
-          "MinGoodFraction": "0.9",
+          "MinEfficiency": "0.8",
+          "MaxEfficiencyDelta": "0.1",
           "PseudoeffPlotScaleMin": "0.0",
           "PseudoeffPlotScaleMax": "1.2"
         },
         "dataSource": [{
-          "type": "Task",
-          "name": "TaskMCHPreclusters",
+          "type": "PostProcessing",
+          "name": "Preclusters",
           "MOs" : "all"
         }]
       }

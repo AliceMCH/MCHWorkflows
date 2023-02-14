@@ -4,7 +4,7 @@
       "MCHDecoding": {
         "active": "true",
         "taskName": "Decoding",
-        "className": "o2::quality_control_modules::muonchambers::DiagnosticsTask",
+        "className": "o2::quality_control_modules::muonchambers::DecodingTask",
         "moduleName": "QcMuonChambers",
         "detectorName": "MCH",
         "cycleDurationSeconds": "%QC_CYCLE_DURATION%",
@@ -19,53 +19,10 @@
         "location": "remote"
       }
     },
-    "postprocessing": {
-      "Decoding": {
-        "active": "true",
-        "className": "o2::quality_control_modules::muonchambers::DiagnosticsPostProcessing",
-        "moduleName": "QcMuonChambers",
-        "detectorName": "MCH",
-        "customization": [
-          {
-            "name": "ReferenceTimeStamp",
-            "value": "1669672094149"
-          },
-          {
-            "name": "_ReferenceDate",
-            "value": "2022/11/16 16:41:00"
-          }
-        ],
-        "dataSources": [
-          {
-            "type": "repository",
-            "path": "MCH/MO/TaskMCHDiagnostics",
-            "names": [
-              "errors:DecodingErrorsFEC"
-            ],
-            "reductorName": "o2::quality_control_modules::muonchambers::TH2ElecMapReductor",
-            "moduleName": "QcMuonChambers"
-          }
-        ],
-        "plots": [
-        ],
-        "initTrigger": [
-          "userorcontrol"
-        ],
-        "updateTrigger_": [
-          "%QC_CYCLE_DURATION%sec"
-        ],
-        "updateTrigger": [
-          "newobject:qcdb:MCH/MO/TaskMCHDiagnostics/DecodingErrorsFEC"
-        ],
-        "stopTrigger": [
-          "userorcontrol"
-        ]
-      }
-    },
     "checks": {
-      "QcCheckMCHErrors": {
+      "MCHDecodingCheck": {
         "active": "true",
-        "className": "o2::quality_control_modules::muonchambers::DecodingErrorsCheck",
+        "className": "o2::quality_control_modules::muonchambers::DecodingCheck",
         "moduleName": "QcMuonChambers",
         "detectorName": "MCH",
         "policy": "OnAny",
@@ -75,7 +32,7 @@
         "dataSource": [{
           "type": "Task",
           "name": "MCHDecoding",
-          "MOs" : ["DecodingErrorsPerFeeId", "DecodingErrorsPerChamber", "SynchErrorsPerDE", "SynchErrorsPerChamber"]
+          "MOs" : ["DecodingErrors/DecodingErrorsPerFeeId", "DecodingErrors/DecodingErrorsPerDE", "DecodingErrors/DecodingErrorsPerChamber", "SyncErrors/SynchErrorsPerDE", "SyncErrors/SynchErrorsPerChamber"]
         }]
       }
     }

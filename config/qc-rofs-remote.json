@@ -1,0 +1,26 @@
+{
+  "qc": {
+    "tasks": {
+      "Rofs": {
+        "location": "local",
+        "localControl": "odc",
+        "localMachines": [
+          "localhost"
+        ],
+        "remotePort": "47792",
+        "remoteMachine": "localhost",
+        "mergingMode": "delta"
+      },
+      "FRofs": {
+        "location": "local",
+        "localControl": "odc",
+        "localMachines": [
+          "localhost"
+        ],
+	"remotePort": "47793",
+        "remoteMachine": "localhost",
+        "mergingMode": "delta"
+      }
+    }
+  }
+}
