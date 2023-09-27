@@ -1,7 +1,7 @@
 {
   "qc": {
     "tasks": {
-      "TaskMCHPreclusters": {
+      "MCHPreclusters": {
         "active": "true",
         "taskName": "Preclusters",
         "className": "o2::quality_control_modules::muonchambers::PreclustersTask",
@@ -30,7 +30,7 @@
           },
           {
             "name": "ReferenceTimeStamp",
-            "value": "1669672094149"
+            "value": "1677760200000"
           },
           {
             "name": "_ReferenceDate",
@@ -54,13 +54,7 @@
           "userorcontrol"
         ],
         "updateTrigger": [
-          "%QC_CYCLE_DURATION%sec"
-        ],
-        "updateTrigger_": [
-          "newobject:qcdb:MCH/MO/MCHDigitsTask/Occupancy_Elec",
-          "newobject:qcdb:MCH/MO/MCHDigitsTask/OccupancySignal_Elec",
-          "newobject:qcdb:MCH/MO/MCHDigitsTask/DigitOrbitInTF",
-          "newobject:qcdb:MCH/MO/MCHDigitsTask/DigitSignalOrbitInTF"
+          "newobject:qcdb:MCH/MO/Preclusters/Pseudoeff_Elec"
         ],
         "stopTrigger": [
           "userorcontrol"
@@ -68,7 +62,7 @@
       }
     },
     "checks": {
-      "MCHPreclustersCheck": {
+      "PreclustersCheck": {
         "active": "true",
         "className": "o2::quality_control_modules::muonchambers::PreclustersCheck",
         "moduleName": "QcMuonChambers",

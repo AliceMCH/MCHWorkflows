@@ -1,13 +1,13 @@
 {
   "qc": {
     "tasks": {
-      "MCHPreclusters": {
+      "MCHTracks": {
         "location": "local",
         "localControl": "odc",
         "localMachines": [
           "localhost"
         ],
-        "remotePort": "47794",
+        "remotePort": "47795",
         "remoteMachine": "localhost",
         "mergingMode": "delta"
       }

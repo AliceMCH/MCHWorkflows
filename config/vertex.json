@@ -1,0 +1,69 @@
+{
+  "qc": {
+    "config": {
+      "database": {
+        "implementation": "CCDB",
+        "host2": "localhost:8080",
+        "host": "ccdb-test.cern.ch:8080",
+        "username": "not_applicable",
+        "password": "not_applicable",
+        "name": "not_applicable",
+        "maxObjectSize": "12582912"
+      },
+      "conditionDB": {
+        "url": "ccdb-test.cern.ch:8080",
+        "url2": "https://alice-ccdb.cern.ch"
+      },
+      "infologger": {
+        "": "Message at this level or above are discarded (default: 21 - Trace)",
+        "filterDiscardDebug": "0",
+        "filterDiscardLevel": "21"
+      },
+      "postprocessing": {
+        "matchAnyRunNumber": "true"
+      },
+      "Activity": {}
+    },
+    "tasks": {
+    },
+    "postprocessing": {
+      "MeanVtxPPTest": {
+        "active": "true",
+        "className": "o2::quality_control_modules::glo::MeanVertexPostProcessing",
+        "moduleName": "QcGLO",
+        "detectorName": "GLO",
+        "initTrigger": [
+          "userorcontrol"
+        ],
+        "_updateTrigger": [
+          "foreachobject:ccdb:GLO/Calib/MeanVertex"
+        ],
+        "updateTrigger": [
+          "30 seconds"
+        ],
+        "stopTrigger": [
+          "userorcontrol"
+        ],
+        "customization": [
+          {
+            "_CcdbURL": "ccdb-test.cern.ch:8080",
+            "CcdbURL": "https://alice-ccdb.cern.ch",
+            "RangeX": "0.1",
+            "RangeY": "0.2",
+            "RangeZ": "1.0",
+            "RangeSigmaX": "0.1",
+            "RangeSigmaY": "0.2",
+            "RangeSigmaZ": "1.0",
+            "ResetHistos": "1"
+          }
+        ]
+      }
+    },
+    "checks": {
+    },
+    "aggregators": {
+    },
+    "externalTasks": null
+  },
+  "dataSamplingPolicies": []
+}

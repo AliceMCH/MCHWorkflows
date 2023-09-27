@@ -19,8 +19,8 @@ INPUT_TYPE=${INPUT_TYPE:-ctflist}
 # Reconstruction setup
 
 RECO_MCH=${RECO_MCH:-1}
-RECO_MID=${RECO_MID:-1}
-RECO_MFT=${RECO_MFT:-1}
+RECO_MID=${RECO_MID:-0}
+RECO_MFT=${RECO_MFT:-0}
 
 RUN_DIGITS_FILTER=${RUN_DIGITS_FILTER:-1}
 RUN_PRECLUSTERING=${RUN_PRECLUSTERING:-1}
@@ -71,7 +71,9 @@ if [ x"${CONFIG_TYPE}" = "xpp" ]; then
 
     DIGIT_FILTER_CONFIG="MCHDigitFilter.rejectBackground=true;MCHDigitFilter.timeOffset=120;MCHDigitFilter.minADC=1"
     TIME_CLUSTERING_CONFIG="MCHTimeClusterizer.onlyTrackable=true;MCHTimeClusterizer.peakSearchSignalOnly=true"
-    CLUSTERING_CONFIG="MCHClustering.lowestPadCharge=10;MCHClustering.defaultClusterResolution=0.4"
+    #TIME_CLUSTERING_CONFIG="MCHTimeClusterizer.onlyTrackable=true;MCHTimeClusterizer.peakSearchSignalOnly=true;MCHTimeClusterizer.enableUnfilteredOutput=true"
+    #CLUSTERING_CONFIG="MCHClustering.lowestPadCharge=10;MCHClustering.defaultClusterResolution=0.4"
+    CLUSTERING_CONFIG="MCHClustering.lowestPadCharge=15"
     TRACKING_CONFIG="MCHTracking.chamberResolutionX=0.4;MCHTracking.chamberResolutionY=0.4;MCHTracking.sigmaCutForTracking=7.;MCHTracking.sigmaCutForImprovement=6."
     #CLUSTERING_CONFIG="MCHClustering.lowestPadCharge=10;MCHClustering.defaultClusterResolution=0.07"
     #TRACKING_CONFIG="MCHTracking.chamberResolutionX=0.07;MCHTracking.chamberResolutionY=0.07;MCHTracking.sigmaCutForTracking=7.;MCHTracking.sigmaCutForImprovement=6."
@@ -169,7 +171,7 @@ if [ x"$QC_TASK_DIGITS_ENABLE" = "x1" ]; then
 	QCCONFREM+="${CONFIG_DIR}/qc-digits-remote.json "
     fi
 fi
-if [ x"${INPUT_TYPE}" = "xreadout" ]; then
+if [ x"${INPUT_TYPE}" != "xctflist" ]; then
     QCCONF+="${CONFIG_DIR}/qc-errors.json "
     if [ x"${RUN_QC_MERGER}" = "x1" ]; then
 	QCCONFREM+="${CONFIG_DIR}/qc-errors-remote.json "
@@ -189,6 +191,12 @@ if [ x"$QC_TASK_PRECLUSTERS_ENABLE" = "x1" ]; then
 fi
 if [ x"${RUN_TRACKING}" = "x1" ]; then
     QCCONF+="${CONFIG_DIR}/qc-tracks-mch.json "
+    if [ x"${RUN_QC_MERGER}" = "x1" ]; then
+	QCCONFREM+="${CONFIG_DIR}/qc-tracks-mch-remote.json "
+    fi
+fi
+if [ x"$RECO_MFT" == "x1" ]; then
+    QCCONF+="${CONFIG_DIR}/qc-tracks-mft.json "
 fi
 if [ x"$QC_TASK_TRACKS_MFTMCH_ENABLE" = "x1" ]; then
     QCCONF+="${CONFIG_DIR}/qc-tracks-mftmch.json "
@@ -200,6 +208,7 @@ if [ x"$QC_TASK_TRACKS_MFTMCHMID_ENABLE" = "x1" ]; then
     QCCONF+="${CONFIG_DIR}/qc-tracks-mftmchmid.json "
 fi
 QCCONF+="${CONFIG_DIR}/qc-quality.json "
+QCCONF+="${CONFIG_DIR}/vertex.json "
 ARGS_QC=""
 
 jq -n 'reduce inputs as $s (input; .qc.tasks += ($s.qc.tasks) | .qc.checks += ($s.qc.checks) | .qc.aggregators += ($s.qc.aggregators)  | .qc.externalTasks += ($s.qc.externalTasks) | .qc.postprocessing += ($s.qc.postprocessing)| .dataSamplingPolicies += ($s.dataSamplingPolicies))' $QCCONF > qc-temp.json
@@ -242,6 +251,7 @@ QC_PROF=""
 
 CONDITION_REMAP=""
 #CONDITION_REMAP="--condition-remap file://.=GLO/Config/GeometryAligned"
+#CONDITION_REMAP="--condition-remap file://.=GLO/Config/GeometryAligned-2023"
 
 if [ $INPUT_TYPE = ctflist ]; then
     WORKFLOW="o2-ctf-reader-workflow ${ARGS_ALL} --ctf-input \"$1\" --remote-regex \"^alien://.+\" --copy-cmd no-copy --onlyDet ${DETECTORS_LIST} --max-tf ${MAX_TF} --delay $TFDELAY ${CONDITION_REMAP} | "
@@ -250,12 +260,12 @@ fi
 
 if [ $INPUT_TYPE = tflist ]; then
     WORKFLOW="o2-raw-tf-reader-workflow ${ARGS_ALL} --onlyDet ${DETECTORS_LIST} --input-data tflist.txt --remote-regex \"^alien://.+\" --delay 1 --loop 0 | "
-    WORKFLOW+="o2-mch-raw-to-digits-workflow ${ARGS_ALL} --configKeyValues \"MCHCoDecParam.minDigitOrbitAccepted=-10;MCHCoDecParam.maxDigitOrbitAccepted=-1;HBFUtils.nHBFPerTF=128\" --time-reco-mode bcreset | "
+    WORKFLOW+="o2-mch-raw-to-digits-workflow ${ARGS_ALL} --configKeyValues \"MCHCoDecParam.minDigitOrbitAccepted=-10;MCHCoDecParam.maxDigitOrbitAccepted=-1;HBFUtils.nHBFPerTF=32\" --time-reco-mode bcreset | "
 fi
 
 if [ $INPUT_TYPE = readout ]; then
     WORKFLOW="o2-mch-cru-page-reader-workflow ${ARGS_ALL} --infile \"$1\" --full-tf | " #--print | "
-    WORKFLOW+="o2-mch-raw-to-digits-workflow ${ARGS_ALL} --dataspec readout:RDT/RAWDATA --ignore-dist-stf --severity warning --configKeyValues \"MCHCoDecParam.minDigitOrbitAccepted=-10;MCHCoDecParam.maxDigitOrbitAccepted=-1;HBFUtils.nHBFPerTF=128\" --time-reco-mode bcreset ${MAP_OPT} ${DECODER_PROF} | "
+    WORKFLOW+="o2-mch-raw-to-digits-workflow ${ARGS_ALL} --dataspec readout:RDT/RAWDATA --ignore-dist-stf --severity warning --configKeyValues \"MCHCoDecParam.minDigitOrbitAccepted=-10;MCHCoDecParam.maxDigitOrbitAccepted=-1;HBFUtils.nHBFPerTF=32\" --time-reco-mode bcreset ${MAP_OPT} ${DECODER_PROF} | "
 fi
 
 
@@ -266,10 +276,10 @@ if [ x"${RECO_MCH}" = "x1" ]; then
 else
     
     if [ x"$RUN_DIGITS_FILTER" = "x1" ]; then
-	WORKFLOW+="o2-mch-digits-filtering-workflow ${ARGS_ALL} --severity warning --input-digits-data-description \"DIGITS\" --input-digitrofs-data-description \"DIGITROFS\" --disable-mc true --configKeyValues \"${DIGIT_FILTER_CONFIG}\" | "
+	WORKFLOW+="o2-mch-digits-filtering-workflow ${ARGS_ALL} --severity info --input-digits-data-description \"DIGITS\" --input-digitrofs-data-description \"DIGITROFS\" --disable-mc true --configKeyValues \"${DIGIT_FILTER_CONFIG}\" | "
     fi
     
-    WORKFLOW+="o2-mch-digits-to-timeclusters-workflow ${ARGS_ALL} --severity warning --input-digits-data-description \"F-DIGITS\" --input-digitrofs-data-description \"F-DIGITROFS\" --configKeyValues \"${TIME_CLUSTERING_CONFIG}\" | "
+    WORKFLOW+="o2-mch-digits-to-timeclusters-workflow ${ARGS_ALL} --severity info --input-digits-data-description \"F-DIGITS\" --input-digitrofs-data-description \"F-DIGITROFS\" --configKeyValues \"${TIME_CLUSTERING_CONFIG}\" | "
     
     if [ x"$RUN_PRECLUSTERING" = "x1" ]; then
 	WORKFLOW+="o2-mch-digits-to-preclusters-workflow ${ARGS_ALL} --input-digits-data-description \"F-DIGITS\" --check-no-leftover-digits off | "
@@ -308,7 +318,7 @@ if [ x"${RECO_MFT}" = "x1" ]; then
     fi
     #MFTMCHConf+="FwdMatching.matchFcn=\"matchNeedsName\";"
     MFTMCHConf+="FwdMatching.cutFcn=\"cut3SigmaXYAngles\";"
-    WORKFLOW+="o2-globalfwd-matcher-workflow ${ARGS_ALL} --disable-mc --disable-root-input --enable-match-output --disable-root-output --configKeyValues \"$MFTMCHConf\" | "
+    #WORKFLOW+="o2-globalfwd-matcher-workflow ${ARGS_ALL} --disable-mc --disable-root-input --enable-match-output --disable-root-output --configKeyValues \"$MFTMCHConf\" | "
 
 fi
 

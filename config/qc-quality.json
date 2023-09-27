@@ -1,54 +1,143 @@
 {
   "qc": {
     "aggregators": {
-      "MCHAggregator": {
+      "MCHQuality": {
         "active": "true",
         "className": "o2::quality_control_modules::muonchambers::MCHAggregator",
         "moduleName": "QcMuonChambers",
+        "_className": "o2::quality_control_modules::common::WorstOfAllAggregator",
+        "_moduleName": "QualityControl",
         "policy": "OnAll",
         "detectorName": "MCH",
         "dataSource": [
-        {
-          "type": "Check",
-          "name": "MCHDigitsCheck"
-        },
-        {
-          "type": "Check",
-          "name": "MCHPreclustersCheck"
-        }]
+          {
+            "type": "Check",
+            "name": "DigitsCheck",
+            "QOs": [""]
+          },
+          {
+            "type": "Check",
+            "name": "PreclustersCheck",
+            "QOs": [""]
+          }
+        ]
       }
     },
     "postprocessing": {
-      "MCHQuality": {
+      "Quality": {
         "active": "true",
         "className": "o2::quality_control_modules::muonchambers::QualityPostProcessing",
         "moduleName": "QcMuonChambers",
+        "_className": "o2::quality_control_modules::common::QualityTask",
+        "_moduleName": "QualityControl",
         "detectorName": "MCH",
+        "customization": [
+          {
+            "name": "AggregatedQualityName",
+            "value": "MCHQuality/MCHQuality"
+          },
+          {
+            "name": "MessageGood",
+            "value": "All checks are OK"
+          },
+          {
+            "name": "MessageMedium",
+            "value": "Add bookkeeping entry"
+          },
+          {
+            "name": "MessageBad",
+            "value": "Inform XYZ on-call immediately"
+          },
+          {
+            "name": "MessageNull",
+            "value": "Some histograms are empty!!!"
+          }
+        ],
         "dataSources": [
           {
             "type": "repository",
             "path": "MCH/QO",
             "names": [
-              "decoding:MCHDecodingCheck", "digits:MCHDigitsCheck", "preclusters:MCHPreclustersCheck"
+              "DecodingCheck", "DigitsCheck", "PreclustersCheck"
             ],
             "reductorName": "o2::quality_control_modules::muonchambers::TH2ElecMapReductor",
             "moduleName": "QcMuonChambers"
           },
           {
             "type": "repository",
-            "path": "MCH/QO/MCHAggregator",
-            "name": "mch:MCHQuality",
+            "path": "MCH/QO/MCHQuality",
+            "name": "MCHQuality",
             "reductorName": "o2::quality_control_modules::muonchambers::TH2ElecMapReductor",
             "moduleName": "QcMuonChambers"
           }
-        ],
-        "plots": [
         ],
         "initTrigger": [
           "userorcontrol"
         ],
         "updateTrigger": [
-          "%QC_CYCLE_DURATION%sec"
+          "newobject:qcdb:MCH/QO/MCHQuality/MCHQuality"
+        ],
+        "stopTrigger": [
+          "userorcontrol"
+        ]
+      },
+      "BigScreen": {
+        "active": "false",
+        "className": "o2::quality_control_modules::common::BigScreen",
+        "moduleName": "QualityControl",
+        "detectorName": "GLO",
+        "customization": [
+          {
+            "name": "NRows",
+            "value": "4"
+          },
+          {
+            "name": "NCols",
+            "value": "5"
+          },
+          {
+            "name": "BorderWidth",
+            "value": "5"
+          },
+          {
+            "name": "NotOlderThan",
+            "value": "3600"
+          },
+          {
+            "name": "IgnoreActivity",
+            "value": "0"
+          }
+        ],
+        "dataSources": [
+          {
+            "names": [
+		"CPV:MCH/QO/MCHQuality/MCHQuality",
+		"EMC:MCH/QO/MCHQuality/MCHQuality",
+		"FDD:MCH/QO/MCHQuality/MCHQuality",
+		"FT0:MCH/QO/MCHQuality/MCHQuality",
+		"FV0:MCH/QO/MCHQuality/MCHQuality",
+		"HMP:MCH/QO/MCHQuality/MCHQuality",
+		"ITS:MCH/QO/MCHQuality/MCHQuality",
+		"MCH:MCH/QO/MCHQuality/MCHQuality",
+		"MFT:MCH/QO/MCHQuality/MCHQuality",
+		"MID:MCH/QO/MCHQuality/MCHQuality",
+		"PHS:MCH/QO/MCHQuality/MCHQuality",
+		"TOF:MCH/QO/MCHQuality/MCHQuality",
+		"TPC:MCH/QO/MCHQuality/MCHQuality",
+		"TRD:MCH/QO/MCHQuality/MCHQuality",
+		"ZDC:MCH/QO/MCHQuality/MCHQuality",
+		"TRK:MCH/QO/MCHQuality/_MCHQuality",
+		"MTK:MCH/QO/MCHQuality/_MCHQuality",
+		"VTX:MCH/QO/MCHQuality/_MCHQuality",
+		"PID:MCH/QO/MCHQuality/_MCHQuality"
+	    ]
+          }
+        ],
+        "initTrigger": [
+          "userorcontrol"
+        ],
+        "updateTrigger": [
+          "newobject:qcdb:MCH/QO/MCHQuality/MCHQuality"
         ],
         "stopTrigger": [
           "userorcontrol"

@@ -19,20 +19,69 @@
         "location": "remote"
       }
     },
+    "postprocessing": {
+      "Decoding": {
+        "active": "true",
+        "className": "o2::quality_control_modules::muonchambers::DecodingPostProcessing",
+        "moduleName": "QcMuonChambers",
+        "detectorName": "MCH",
+        "customization": [
+          {
+            "name": "FullHistos",
+            "value": "0"
+          },
+          {
+            "name": "ReferenceTimeStamp",
+            "value": "1669672094149"
+          },
+          {
+            "name": "_ReferenceDate",
+            "value": "2022/11/16 16:41:00"
+          }
+        ],
+        "dataSources": [
+          {
+            "type": "repository",
+            "path": "MCH/MO/Decoding",
+            "names": [
+              "errors:DecodingErrors_Elec", "hbpackets:HBCoarseTime_Elec", "syncstatus:SyncStatus_Elec"
+            ],
+            "reductorName": "o2::quality_control_modules::muonchambers::TH2ElecMapReductor",
+            "moduleName": "QcMuonChambers"
+          }
+        ],
+        "plots": [
+        ],
+        "initTrigger": [
+          "userorcontrol"
+        ],
+        "updateTrigger": [
+          "%QC_CYCLE_DURATION%sec"
+        ],
+        "stopTrigger": [
+          "userorcontrol"
+        ]
+      }
+    },
     "checks": {
-      "MCHDecodingCheck": {
+      "DecodingCheck": {
         "active": "true",
         "className": "o2::quality_control_modules::muonchambers::DecodingCheck",
         "moduleName": "QcMuonChambers",
         "detectorName": "MCH",
         "policy": "OnAny",
         "checkParameters": {
-          "MaxErrorRate": "100"
+          "MinGoodErrorFrac": "0.9",
+          "MinGoodSyncFrac": "0.9",
+          "MaxBadDE_ST12": "2",
+          "MaxBadDE_ST345": "5",
+          "GoodFracHistName": "DecodingErrors/LastCycle/GoodBoardsFractionPerDE",
+          "SyncFracHistName": "SyncErrors/LastCycle/SyncedBoardsFractionPerDE"
         },
         "dataSource": [{
-          "type": "Task",
-          "name": "MCHDecoding",
-          "MOs" : ["DecodingErrors/DecodingErrorsPerFeeId", "DecodingErrors/DecodingErrorsPerDE", "DecodingErrors/DecodingErrorsPerChamber", "SyncErrors/SynchErrorsPerDE", "SyncErrors/SynchErrorsPerChamber"]
+          "type": "PostProcessing",
+          "name": "Decoding",
+          "MOs" : "all"
         }]
       }
     }

@@ -15,25 +15,17 @@
         "taskParameters" : {
           "maxTracksPerTF": "5000"
         },
+	"grpGeomRequest": {
+          "geomRequest": "Aligned",
+          "askGRPECS": "false",
+          "askGRPLHCIF": "false",
+          "askGRPMagField": "false",
+          "askMatLUT": "false",
+          "askTime": "false",
+          "askOnceAllButField": "false",
+          "needPropagatorD": "false"
+        },
         "saveObjectsToFile": "qc-mch-tracks.root",
-        "location": "remote"
-      },
-      "MCHTracks2": {
-        "active": "false",
-        "className": "o2::quality_control_modules::muon::TracksTask",
-        "moduleName": "QcMUONCommon",
-        "detectorName": "GLO",
-        "cycleDurationSeconds": "%QC_CYCLE_DURATION%",
-        "maxNumberCycles": "-1",
-        "dataSource": {
-          "type": "direct",
-          "query": "trackMCH:MCH/TRACKS;trackMCHROF:MCH/TRACKROFS;trackMCHTRACKCLUSTERS:MCH/TRACKCLUSTERS;mchtrackdigits:MCH/CLUSTERDIGITS"
-        },
-        "taskParameters": {
-          "maxTracksPerTF": "600",
-          "GID" : "MCH"
-        },
-        "saveObjectsToFile": "qc-mch-tracks2.root",
         "location": "remote"
       }
     },

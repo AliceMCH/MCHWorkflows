@@ -15,5 +15,7 @@ DEFAULTS=o2-epn
 aliBuild init O2@${O2_BRANCH} --defaults ${DEFAULTS}
 aliBuild init QualityControl@${QC_BRANCH} --defaults ${DEFAULTS}
 aliBuild init DataDistribution@dev --defaults ${DEFAULTS}
+aliBuild init O2DPG@master --defaults ${DEFAULTS}
 
-aliBuild -j 4 build O2Suite --defaults ${DEFAULTS} $1
+#aliBuild -j 4 build O2Suite --defaults ${DEFAULTS} $1
+aliBuild -j 4 build O2PDPSuite --defaults ${DEFAULTS} $1

@@ -3,8 +3,8 @@
     "config": {
       "database": {
         "implementation": "CCDB",
-        "host": "localhost:8080",
-        "host2": "ccdb-test.cern.ch:8080",
+        "host2": "localhost:8080",
+        "host": "ccdb-test.cern.ch:8080",
         "username": "not_applicable",
         "password": "not_applicable",
         "name": "not_applicable"
@@ -17,36 +17,70 @@
     "tasks": {
       "MCHPedestals": {
         "active": "true",
+        "taskName": "Pedestals",
         "className": "o2::quality_control_modules::muonchambers::PedestalsTask",
         "moduleName": "QcMuonChambers",
         "detectorName": "MCH",
-        "cycleDurationSeconds": "60",
+        "cycleDurationSeconds": "6000",
         "maxNumberCycles": "-1",
         "dataSource": {
           "type": "direct",
-          "query" : "pedestals:MCH/PEDESTALS"
+          "query" : "pedestals:MCH/PEDESTALS;badchan:MCH/BADCHAN"
         },
         "saveObjectsToFile": "qc-mch-pedestals.root",
+        "location": "remote"
+      },
+      "DecodingPed": {
+        "active": "true",
+        "taskName": "DecodingPed",
+        "className": "o2::quality_control_modules::muonchambers::DecodingTask",
+        "moduleName": "QcMuonChambers",
+        "detectorName": "MCH",
+        "cycleDurationSeconds": "6000",
+        "maxNumberCycles": "-1",
+        "dataSource": {
+          "type": "direct",
+          "query": "rawerrors:MCH/ERRORS;hbpackets:MCH/HBPACKETS"
+        },
+        "taskParameters" : {
+          "HBExpectedBc" : "456190"
+        },
         "location": "remote"
       }
     },
     "checks": {
-      "QcCheckMCHPedestals": {
-        "active": "false",
+      "Pedestals": {
+        "active": "true",
+        "checkName": "Pedestals",
         "className": "o2::quality_control_modules::muonchambers::PedestalsCheck",
         "moduleName": "QcMuonChambers",
         "detectorName": "MCH",
         "policy": "OnAny",
         "checkParameters": {
-          "MinPedestal": "40",
-          "MaxPedestal": "250",
-          "MinGoodFraction": "0.8",
-          "MinGoodFractionPerDE": "0.4"
+          "mMaxBadDE": "3",
+          "MaxBadFractionPerDE": "0.05",
+          "MaxEmptyFractionPerDE": "0.1",
+          "MinStatisticsPerDE": "1000"
         },
         "dataSource": [{
           "type": "Task",
           "name": "MCHPedestals",
           "MOs": "all"
+        }]
+      },
+      "DecodingPed": {
+        "active": "true",
+        "className": "o2::quality_control_modules::muonchambers::DecodingCheck",
+        "moduleName": "QcMuonChambers",
+        "detectorName": "MCH",
+        "policy": "OnAny",
+        "checkParameters": {
+          "MaxErrorRate": "100"
+        },
+        "dataSource": [{
+          "type": "Task",
+          "name": "DecodingPed",
+          "MOs" : ["DecodingErrors/DecodingErrorsPerFeeId", "DecodingErrors/DecodingErrorsPerDE", "DecodingErrors/DecodingErrorsPerChamber", "SyncErrors/SynchErrorsPerDE", "SyncErrors/SynchErrorsPerChamber"]
         }]
       }
     }

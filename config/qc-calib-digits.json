@@ -28,6 +28,66 @@
         },
         "saveObjectsToFile": "qc-mch-pedestals.root",
         "location": "remote"
+      },
+      "MCHDecoding": {
+        "active": "true",
+        "taskName": "Decoding",
+        "className": "o2::quality_control_modules::muonchambers::DiagnosticsTask",
+        "moduleName": "QcMuonChambers",
+        "detectorName": "MCH",
+        "cycleDurationSeconds": "60",
+        "maxNumberCycles": "-1",
+        "dataSource": {
+          "type": "direct",
+          "query": "rawerrors:MCH/ERRORS;hbpackets:MCH/HBPACKETS"
+        },
+        "taskParameters" : {
+          "HBExpectedBc" : "456190"
+        },
+        "location": "remote"
+      }
+    },
+    "postprocessing": {
+      "Decoding": {
+        "active": "true",
+        "className": "o2::quality_control_modules::muonchambers::DiagnosticsPostProcessing",
+        "moduleName": "QcMuonChambers",
+        "detectorName": "MCH",
+        "customization": [
+          {
+            "name": "ReferenceTimeStamp",
+            "value": "1669672094149"
+          },
+          {
+            "name": "_ReferenceDate",
+            "value": "2022/11/16 16:41:00"
+          }
+        ],
+        "dataSources": [
+          {
+            "type": "repository",
+            "path": "MCH/MO/Decoding",
+            "names": [
+              "errors:DecodingErrorsFEC", "hbpackets:HBTimeFEC"
+            ],
+            "reductorName": "o2::quality_control_modules::muonchambers::TH2ElecMapReductor",
+            "moduleName": "QcMuonChambers"
+          }
+        ],
+        "plots": [
+        ],
+        "initTrigger": [
+          "userorcontrol"
+        ],
+        "updateTrigger": [
+          "60sec"
+        ],
+        "updateTrigger_": [
+          "newobject:qcdb:MCH/MO/Decoding/DecodingErrorsFEC"
+        ],
+        "stopTrigger": [
+          "userorcontrol"
+        ]
       }
     },
     "checks": {
@@ -47,6 +107,21 @@
           "type": "Task",
           "name": "MCHPedestals",
           "MOs": "all"
+        }]
+      },
+      "QcCheckMCHErrors": {
+        "active": "true",
+        "className": "o2::quality_control_modules::muonchambers::DecodingErrorsCheck",
+        "moduleName": "QcMuonChambers",
+        "detectorName": "MCH",
+        "policy": "OnAny",
+        "checkParameters": {
+          "MaxErrorRate": "100"
+        },
+        "dataSource": [{
+          "type": "Task",
+          "name": "MCHDecoding",
+          "MOs" : ["DecodingErrorsPerFeeId", "DecodingErrorsPerChamber", "SynchErrorsPerDE", "SynchErrorsPerChamber"]
         }]
       }
     }

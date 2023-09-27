@@ -1,7 +1,7 @@
 {
   "qc": {
     "tasks": {
-      "TaskMCHDigits": {
+      "MCHDigits": {
         "location": "local",
         "localControl": "odc",
         "localMachines": [

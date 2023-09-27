@@ -16,6 +16,16 @@
           "maxTracksPerTF": "600",
           "GID" : "MCH,MID,MCH-MID"
         },
+        "grpGeomRequest": {
+          "geomRequest": "Aligned",
+          "askGRPECS": "true",
+          "askGRPLHCIF": "false",
+          "askGRPMagField": "false",
+          "askMatLUT": "false",
+          "askTime": "false",
+          "askOnceAllButField": "false",
+          "needPropagatorD": "false"
+        },
         "saveObjectsToFile": "qc-mchmid-tracks.root",
         "location": "remote"
       }

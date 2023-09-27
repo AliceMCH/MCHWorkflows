@@ -3,8 +3,8 @@
     "config": {
       "database": {
         "implementation": "CCDB",
-        "host": "localhost:8080",
-        "host2": "ccdb-test.cern.ch:8080",
+        "_host": "localhost:8080",
+        "host": "ccdb-test.cern.ch:8080",
         "username": "not_applicable",
         "password": "not_applicable",
         "name": "not_applicable",
@@ -14,8 +14,9 @@
         "url": "alice-ccdb.cern.ch"
       },
       "Activity": {
-        "number": "42",
-        "type": "2"
+        "number": "536119",
+        "type": "1",
+        "beamType" : "PROTON-PROTON"
       }
     },
     "tasks": {

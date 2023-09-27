@@ -18,6 +18,23 @@
         "saveObjectsToFile": "qc-mch-rofs.root",
         "location": "remote"
       },
+      "TCRofs": {
+        "active": "false",
+        "className": "o2::quality_control_modules::muonchambers::RofsTask",
+        "moduleName": "QcMuonChambers",
+        "detectorName": "MCH",
+        "cycleDurationSeconds": "%QC_CYCLE_DURATION%",
+        "maxNumberCycles": "-1",
+        "dataSource": {
+          "type": "direct",
+          "query" : "digits:MCH/F-DIGITS;rofs:MCH/UTC-F-DIGITROFS"
+        },
+        "taskParameters" : {
+          "Diagnostic" : "false"
+        },
+        "saveObjectsToFile": "qc-mch-rofs-unfiltered.root",
+        "location": "remote"
+      },
       "FRofs": {
         "active": "true",
         "className": "o2::quality_control_modules::muonchambers::RofsTask",

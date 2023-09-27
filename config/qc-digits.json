@@ -1,7 +1,7 @@
 {
   "qc": {
     "tasks": {
-      "TaskMCHDigits": {
+      "MCHDigits": {
         "active": "true",
         "taskName": "Digits",
         "className": "o2::quality_control_modules::muonchambers::DigitsTask",
@@ -16,8 +16,40 @@
           "name2": "digits"
         },
         "taskParameters" : {
+          "mykey" : "myvalue1",
           "Diagnostic" : "false",
           "OnCycle" : "true"
+        },
+        "extendedTaskParameters": {
+          "default": {
+            "default": {
+              "mykey" : "myvalue2"
+            }
+          },
+          "PHYSICS": {
+            "default": {
+              "mykey" : "myvalue3"
+            },
+            "PROTON-PROTON": {
+              "mykey" : "myvalue3"
+            },
+            "Pb-Pb": {
+              "mykey" : "myvalue4"
+            }
+          },
+          "COSMICS": {
+            "Diagnostic" : "myvalue5"
+          }
+        },
+	"grpGeomRequest": {
+          "geomRequest": "None",
+          "askGRPECS": "true",
+          "askGRPLHCIF": "false",
+          "askGRPMagField": "false",
+          "askMatLUT": "false",
+          "askTime": "false",
+          "askOnceAllButField": "false",
+          "needPropagatorD": "false"
         },
         "saveObjectsToFile": "qc-mch-digits.root",
         "location": "remote"
@@ -32,11 +64,11 @@
         "customization": [
           {
             "name": "FullHistos",
-            "value": "0"
+            "value": "1"
           },
           {
             "name": "ChannelRateMin",
-            "value": "0.00001"
+            "value": "0.000001"
           },
           {
             "name": "ChannelRateMax",
@@ -44,7 +76,7 @@
           },
           {
             "name": "ReferenceTimeStamp",
-            "value": "1669672094149"
+            "value": "1677760098000"
           },
           {
             "name": "_ReferenceDate",
@@ -56,7 +88,7 @@
             "type": "repository",
             "path": "MCH/MO/Digits",
             "names": [
-              "rate:Occupancy_Elec", "rate_signal:OccupancySignal_Elec", "orbits:DigitOrbitInTF", "orbits_signal:DigitSignalOrbitInTF"
+              "rate:Occupancy_Elec", "rate_signal:OccupancySignal_Elec", "orbits:DigitOrbit_Elec", "orbits_signal:DigitSignalOrbit_Elec"
             ],
             "reductorName": "o2::quality_control_modules::muonchambers::TH2ElecMapReductor",
             "moduleName": "QcMuonChambers"
@@ -68,13 +100,7 @@
           "userorcontrol"
         ],
         "updateTrigger": [
-          "%QC_CYCLE_DURATION%sec"
-        ],
-        "updateTrigger_": [
-          "newobject:qcdb:MCH/MO/MCHDigitsTask/Occupancy_Elec",
-          "newobject:qcdb:MCH/MO/MCHDigitsTask/OccupancySignal_Elec",
-          "newobject:qcdb:MCH/MO/MCHDigitsTask/DigitOrbitInTF",
-          "newobject:qcdb:MCH/MO/MCHDigitsTask/DigitSignalOrbitInTF"
+          "newobject:qcdb:MCH/MO/Digits/DigitOrbit_Elec"
         ],
         "stopTrigger": [
           "userorcontrol"
@@ -82,45 +108,26 @@
       }
     },
     "checks": {
-      "CheckTaskMCHDigits": {
-        "active": "false",
-        "className": "o2::quality_control_modules::muonchambers::DigitsCheck",
-        "moduleName": "QcMuonChambers",
-        "detectorName": "MCH",
-        "policy": "OnAny",
-        "checkParameters": {
-          "MinRate": "0.01",
-          "MaxRate": "10",
-          "MinGoodFraction": "0.9",
-          "RatePlotScaleMin": "0.0001",
-          "RatePlotScaleMax": "10",
-          "Verbose": "false"
-        },
-        "dataSource": [
-          {
-            "type": "Task",
-            "name": "TaskMCHDigits",
-            "MOs" : "all"
-          }
-        ]
-      },
-      "MCHDigitsCheck": {
+      "DigitsCheck": {
         "active": "true",
         "className": "o2::quality_control_modules::muonchambers::DigitsCheck",
         "moduleName": "QcMuonChambers",
         "detectorName": "MCH",
         "policy": "OnAll",
         "checkParameters": {
-          "MeanRateHistName": "RatesSignal/OnCycle/MeanRate",
-          "MeanRateRatioHistName": "RatesSignal/OnCycle/MeanRateRefRatio",
-          "BadChanFracHistName": "RatesSignal/OnCycle/BadChannelsFraction",
-          "MinRate": "0.01",
+          "MeanRateHistName": "RatesSignal/LastCycle/MeanRate",
+          "MeanRateRatioHistName": "RatesSignal/LastCycle/MeanRateRefRatio",
+          "GoodChanFracHistName": "RatesSignal/LastCycle/GoodChannelsFraction",
+          "GoodChanFracRatioHistName": "RatesSignal/LastCycle/GoodChannelsFractionRefRatio",
+          "MinRate": "0.00001",
           "MaxRate": "1",
           "MaxRateDelta": "0.1",
-          "MinGoodFraction": "0.9",
-          "RatePlotScaleMin": "0.0001",
+          "MinGoodFraction": "0.8",
+          "MaxGoodFractionDelta": "1.15",
+          "RatePlotScaleMin": "0.000001",
           "RatePlotScaleMax": "10",
-          "Verbose": "false"
+          "MaxBadDE_ST12": "2",
+          "MaxBadDE_ST345": "5"
         },
         "dataSource": [
           {
